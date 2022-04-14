@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="style_1.css" media="screen"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- <script type="text/javascript" src="parsers.js"></script>
+        <script type="text/javascript" src="utils.js"></script>
+        <script type="text/javascript" src="prudensUtils.js"></script>
+        <script type="text/javascript" src="prudens.js"></script>
+        <script type="text/javascript" src="abduction.js"></script> -->
+        <title>
+            Prudens
+        </title>
+    </head>
+    <body>
+        <div class="navbar-container">
+            <div class="navbar-centering-container">
+                <div class="hamburger-menu-container" onclick="burgerMenuDrop()">
+                    <i id="menu-burger" class="fa fa-bars fa-2x"></i>
+                </div>
+                <div class="navbar-logo-container">
+                    <a href="index.html">Prudens</a>
+                </div>
+                <div class="social-icons-container">
+                    <a href="https://github.com/VMarkos/prudens-js"><i class="fa fa-github fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="hamburger-menu" class="hamburger-menu hidden">
+            <div class="menu-options-container">
+                <div id="menu-options-container" class="menu-options-left-align">
+                    <div class="menu-option">
+                        <a href="index.html"><span><i class="fa fa-home"></i> Home</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_web.html"><span><i class="fa fa-window-maximize"></i> Prudens Web</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_api.html"><span><i class="fa fa-gears"></i> Prudens API</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="docs.html"><span><i class="fa fa-book"></i> Learn Prudens</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="research.html"><span><i class="fa fa-flask"></i> Research</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <div id="main-container" class="cards-grid">
+                <div class="card-container" onclick="window.location='prudens_web.html'">
+                    <i class="fa fa-window-maximize fa-4x"></i>
+                    <h2>Prudens Web</h2>
+                    <p>Play around with Prudens online. Test and debug your policies in a moment.
+                        No installation required!</p>
+                </div>
+                <div class="card-container" onclick="window.location='docs.html'">
+                    <i class="fa fa-gears fa-4x"></i>
+                    <h2>Prudens API</h2>
+                    <p>Integrate Prudens in your applications using the Prudens API!</p>
+                </div>
+                <div class="card-container" onclick="window.location='prudens_api.html'">
+                    <i class="fa fa-book fa-4x"></i>
+                    <h2>Learn Prudens</h2>
+                    <p>Everything you need to know about Prudens, its semantics, the learning theory behind it and
+                        how to use it!
+                    </p>
+                </div>
+                <div class="card-container" onclick="window.location='research.html'">
+                    <i class="fa fa-flask fa-4x"></i>
+                    <h2>Research</h2>
+                    <p>Do you want to help us improve Prudens? Or, do you want to take a look at current research
+                        regarding Prudens? Then this is the right place for you!
+                    </p>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="navbar.js"></script>
+    </body>
+</html>
