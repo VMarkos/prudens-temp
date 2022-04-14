@@ -374,54 +374,68 @@ body {
     width: 400px;
 }
 
-/* Animations */
+/* Documentation */
 
-@keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
-}
-  
-@-moz-keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
+.main-docs-container {
+	display: flex;
+	padding: 20px;
+	justify-content: center;
+	align-items: center;
 }
 
-@-webkit-keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
+.docs-grid-container {
+	display: flex;
+	flex-direction: column;
+	row-gap: 15px;
 }
 
-@-o-keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
+.toc-container {
+	padding-right: 10px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: end;
 }
 
-@-ms-keyframes fadeIn {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
+.toc-container ul {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+	color: white;
+	font-size: 600;
+	text-align: right;
+	list-style-type: none;
 }
 
-@keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
-}
-  
-@-moz-keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
+.toc-container li {
+	padding: 5px;
+	border-radius: 5px;
+	cursor: pointer;
 }
 
-@-webkit-keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
+.toc-container li:hover {
+	background: rgba(255, 255, 255, .1);
 }
 
-@-o-keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
+.docs-text-container {
+	padding: 10px;
 }
 
-@-ms-keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
+.docs-text-container p {
+	text-align: left;
+}
+
+@media only screen and (min-width: 1200px) {
+	.docs-grid-container {
+		display: grid;
+		grid-template-columns: 1fr 3fr;
+		grid-template-areas: "toc body body body";
+	}
+	
+	.toc-container {
+		border-right: 1px solid rgba(255, 255, 255, .3);
+		grid-area: "toc";
+	}
+	
+	.docs-text-container {
+		grid-area: "body";
+	}
 }
