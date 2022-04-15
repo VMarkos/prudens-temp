@@ -460,3 +460,7 @@ body {
 		grid-area: "body";
 	}
 }
+
+.centered-text {
+	text-align: center;
+}
