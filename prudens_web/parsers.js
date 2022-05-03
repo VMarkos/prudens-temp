@@ -66,7 +66,8 @@ function parseValues(values) {
 }
 
 function contextParser() {
-    const context = document.getElementById("context-container").value;
+    // const context = document.getElementById("context-container").value;
+    const context = contextEditor.getValue();
     const contextList = parseContext(context);
     // console.log(contextList);
     if (contextList["type"] === "error") {
@@ -91,7 +92,8 @@ function targetParser() {
 }
 
 function kbParser() {
-    const kbAll = document.getElementById("policy-container").value;
+    // const kbAll = document.getElementById("policy-container").value;
+    const kbAll = policyEditor.getValue();
     return parseKB(kbAll);
 }
 

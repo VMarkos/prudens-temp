@@ -8,6 +8,7 @@ let policyEditor = CodeMirror(policyContainer, {
   gutter: true,
   value: '@KnowledgeBase\n',
   theme: "monokai",
+  mode: "prudens",
 });
 
 policyEditor.setSize(400, 640);
@@ -17,6 +18,7 @@ let contextEditor = CodeMirror(contextContainer, {
   tabSize: 2,
   gutter: true,
   theme: "monokai",
+  mode: "prudens",
 });
 
 contextEditor.setSize(400, 300);
@@ -30,20 +32,11 @@ let consoleEditor = CodeMirror(consoleContainer, { // TODO Change that to some t
 });
 
 consoleEditor.setSize(400, 300);
+consoleEditor.setValue("~$ ");
 
 /*
 Formerly utils.js
 */
-
-function infer() {
-  "use strict";
-  if (tab === "deduce-tab") {
-      return deduce();
-  }
-  else if (tab === "abduce-tab") {
-      return abduce();
-  }
-}
 
 function abduce() {
   "use strict";
@@ -93,6 +86,7 @@ function deduce() {
   // console.log(kbObject);
   // console.log(contextObject); // TODO fix some context parsing issue (in propositional cases it includes the semicolon into the name of the prop)
   const output = forwardChaining(kbObject, contextObject["context"]);
+  // console.log(output);
   const inferences = output["facts"];
   const graph = output["graph"];
   // console.log("Inferences:");
@@ -112,15 +106,17 @@ function consoleOutput() {
   "use strict";
   let newText;
   // if (document.getElementById("exec-button").innerHTML != "Deduce!") {
-  newText = "I am currently not working - wait for some next update!\n\nThanks for your patience! :)";
+  // newText = "I am currently not working - wait for some next update!\n\nThanks for your patience! :)";
   // } else {
-  newText = infer();
+  newText = deduce();
   // }
-  const previous = document.getElementById("console-container").value;
-  document.getElementById(tab + "-console").value = previous + newText + "\n~$ ";
-  if (document.getElementById("download-checkbox").checked) {
+  // const previous = document.getElementById("console-container").value;
+  const previous = consoleEditor.getValue();
+  // document.getElementById(tab + "-console").value = previous + newText + "\n~$ ";
+  consoleEditor.setValue(previous + newText + "\n~$");
+  /* if (document.getElementById("download-checkbox").checked) {
       download("output.txt", newText);
-  }
+  }*/
 }
 
 function clearConsole() {

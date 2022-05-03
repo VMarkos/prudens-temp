@@ -61,7 +61,7 @@
                             <div>
                                 <h2>About Machine Coaching</h2>
                                 <p>
-                                    Since you are viewing this page, you have probalby already heard of "The Internet". Also, you 
+                                    Since you are viewing this page, you 
                                 	are probably already accustomed, up to some extent, with several applications of Artificial
                                 	Intelligence (AI, for short): machine translation, image or voice recognition, home assistants, all
                                 	these applications are fueled by so-called Machine Learning. But, as you may have already experienced,
@@ -76,7 +76,7 @@
                                     consider a simple scenario, where we want to teach to a machine how to handle our calls. Actually, let's
                                     assume that we provide the following piece of advice to our machine:
                             	</p>
-                            	<p class="centered-text">
+                            	<p>
                             		<i>"Do not answer any calls from work on weekends!"</i>
                             	</p>
                             	<p>
@@ -90,35 +90,193 @@
                                     important deadline next Monday means that we might need to have some heated meatings with our co-workers. For this 
                                     prupose, we will need to inform our machine about a minor change in its policy:
                                 </p>
-                                <p class="centered-text">
+                                <p>
                                     <i>"Answer all calls in case I have an upcoming deadline!"</i>
                                 </p>
                                 <p>
                                     Thus, we have introduced an <b>exception</b> to our policy. Namely, we have allowed our assistant to deviate from its 
                                     "do not disturb me on weekends" behavior and allow some calls under some certain <i>circumstances</i>. In a similar
-                                    fashion, we can any time introduce more and more exceptions and, eventually, have our assistant behave as if it was us.
+                                    fashion, we can introduce at any time more and more exceptions and, eventually, have our assistant behave as if it was us.
                                 </p>
                                 <p>
-                                    Observe how the above interaction protocol of
+                                    The above human-machine interaction protocol is a simple case of <i>Machine Coaching</i>.
+                                    For more on Machine Coaching and its formal description, see <a href="https://cognition.ouc.ac.cy/loizos/papers/Michael_2019_MachineCoaching.pdf">this paper</a>.
                                 </p>
                             </div>
                             <div>
                                 <h2>Prudens Syntax</h2>
                                 <p>
-                                    Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem 								aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. 								Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni 								dolores	eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor 									sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore 									magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis 								suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui 									in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas 									nulla pariatur?
+                                    All human-machine interaction within the scope of Machine Coaching is conducted through
+                                    Prudens's language. Below we shall describe this language's syntax, providing relevant 
+                                    examples when necessary. We shall not delve into details on what each of the constructs 
+                                    presented below represent. For more on this, you may consult the "Reasoning" section.
                                 </p>
+                                <h3>Atoms & Literals</h3>
+                                <p>
+									Atoms are expressions of one of the following forms:
+                                </p>
+                                <ul>
+									<li><code>name</code></li>
+									<li><code>name(arg1, arg2,..., argN)</code></li>
+                                </ul>
+                                <p>
+									Atoms of the first kind are called <i>propositional</i> while those of the second kind are
+									called <i>relational</i> or, more often, <i>predicates</i>. In any case, <code>name</code> may be any string such that:
+								</p>
+                                <ul>
+									<li>it starts with a lowercase letter of the latin alphabet;</li>
+									<li>it contains only alphanumeric characters (a-z, A-Z, 0-9) and/or underscores.</li>
+                                </ul>
+                                <p>
+									Regarding a predicate's arguments, they may be of any of the following forms:
+									</p>
+                                <ul>
+									<li>a string starting with a lowercase letter (a-z), containing any number of
+									alphanumeric characters and/or underscores or;</li>
+									<li>a string starting with an uppercase letter (A-Z), containing any number of
+									alphanumeric characters and/or underscores or.</li>
+                                </ul>
+                                <p>
+									Arguments of the first type are called <i>constants</i>, while those of the second are
+									called <i>variables</i>. Note that a predicate's arguments, in case there are more
+									than one, are comma-separated.
+                                </p>
+                                <p>
+									Building on top of atoms, Prudens's language also allows for literals, i.e., atoms or their
+									negations. Negation is denoted by a single dash, <code>-</code>, preceeding an atom, as follows:
+                                </p>
+                                <ul>
+									<li>positive literal (atom): <code>fatherOf(X, bob)</code></li>
+									<li>negative literal (negated atom): <code>-fatherOf(X, bob)</code></li>
+								</ul>
+                                <h3>Rules & Policies</h3>
+                                <p>
+									Rules build up on literals and conceptually capture inferences of the form "If this then that".
+									A rule may be expressed using the following syntax:
+                                </p>
+                                <ul>
+									<li><code>Name :: h1, h2,..., hN implies head</code></li>
+                                </ul>
+                                <p>
+									In the above:
+								</p>
+                                <ul>
+									<li><code>Name</code> may be any string containing only alphanumeric characters and/or
+									unedrscores;</li>
+									<li><code>h1</code>, <code>h2</code>, <code>hN</code> and <code>head</code> may be
+									literals of any form;</li>
+									<li><code>::</code> and <code>implies</code> are reserved keywords 
+									of Prudens's language.</li>
+                                </ul>
+                                <p>
+									The part between <code>::</code> and <code>implies</code> is called the rule's <i>body</i>
+									while the part after the <code>implies</code> keyword is called the rule's
+									<i>head</i>.
+                                </p>
+                                <p>
+									A <i>policy</i> is a list of multiple rules, separated by semicolons, <code>;</code>. Remark
+									that within the same policy no two rules are allowed to share the same name.
+                                </p>
+                                <h3>Custom Predicates & Actions</h3>
+                                <p>
+									The above syntax corresponds to what one may say the language's "vanilla" version. However, over the
+									course of Prudens's development, there has been a need for additional constructs. These are:
+								</p>
+								<ul>
+									<li><i>Action atoms</i>, which are atoms whose name is preceeded by an explamation mark,
+									<code>!</code> and may appear only as part of a rule's <b>head</b> and;</li>
+									<li><i>Custom atoms</i>, which are atoms whose name is preceeded by a 
+									question mark, <code>?</code>, and may appear only in a rule's <b>body</b>.</li>
+								</ul>
+								<p>
+									Note that in any of the cases above, the negation dash, <code>-</code>, appears <b>before</b>
+									any exlamation or question mark. Some examples are shown below:
+                                </p>
+                                <ul>
+									<li><code>!stop</code></li>
+									<li><code>!call(X)</code></li>
+									<li><code>?includes(String, Substring)</code></li>
+									<li><code>-?lessThan(X, 4)</code></li>
+                                </ul>
+                                <h3>Policy & Custom Code</h3>
+                                <p>
+									As discussed above, one may define their own custom atoms, which may be arbitrary JavaScript
+									functions under the following restrictions:
+                                </p>
+                                <ul>
+									<li>No calls to external libraries are allowed;</li>
+									<li>No calls to other custom atoms are allowed and;</li>
+									<li>No recursive calls are allowed, either.</li>
+                                </ul>
+                                <p>
+									In order to distinguish between a policy's rules and any custom predicates defined, one may use
+									the following two decorators:
+								</p>
+								<ul>
+									<li><code>@KnowledgeBase</code></li>
+									<li><code>@Code</code></li>
+								</ul>
+								<p>
+									The first preceedes any code, be it policy-related or not, while the second separates a policy's 
+									rules from any custom atoms. Given the above, the overall structure of a policy including
+									custom code is as follows:
+								</p>
+								<pre>
+									<code>@KnowledgeBase
+										rule1;
+										rule2;
+										rule3;
+										...
+										
+										@Code
+										function foo(bar) {
+											return bar;
+										}
+										
+										function bar(foo) {
+											return foo;
+										}
+									</code>
+								</pre>
                             </div>
                             <div>
-                                <h2>At vero</h2>
+                                <h2>Reasoning</h2>
                                 <p>
-                                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti 									atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique 									sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum 									facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil 									impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor 								repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut 									et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente 									delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores 								repellat.
+                                    Reasoning within Prudens relies on a prioritized variant of (grounded) forward chaining. 
+                                    We shall explain the entire process using some examples, while, for more details, we suggest
+                                    reading Section 4 from <a href="https://cognition.ouc.ac.cy/loizos/papers/Michael_2019_MachineCoaching.pdf">here</a>.
                                 </p>
-                            </div>
-                            <div>
-                                <h2>At vero eos et accusamus et iusto odio dignissimos</h2>
+                                <h3>Simple Exceptions</h3>
                                 <p>
-                                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti 									atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique 									sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum 									facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil 									impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor 								repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut 									et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente 									delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores 								repellat.
-                                </p>
+									Let us consider the following simple policy:
+								</p>
+                                <pre>
+									<code>R1 :: a implies x;
+										R2 :: b, x implies y;
+									</code>
+                                </pre>
+                                <p>
+									As one would expect, given a context such as <code>a; b;</code> using the above policy one might
+									infer that <code>x</code> as well as <code>y</code> hold. However, Prudens can handle more complex
+									situations than that. For instance, consider the following policy, which contains two conflicting
+									rules:
+								</p>
+                                <pre>
+									<code>R1 :: a implies x;
+										R2 :: a, b implies -x;
+									</code>
+                                </pre>
+                                <p>
+									Roughly, the above may be interpreted as follows:
+								</p>
+								<ul>
+									<li>If <code>a</code> holds, then <code>x</code>;</li>
+									<li>If, additionally, <code>b</code> holds as well, then <code>-x</code>.</li>
+								</ul>
+								<p>
+									So, <code>R2</code> is an <b>exception</b> to <code>R1</code>, providing certain conditions 
+									under which the general behavior dictated by <code>R1</code> should be violated.
+								</p>
                             </div>
                     	</div>
                     </div>

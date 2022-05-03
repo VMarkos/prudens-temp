@@ -437,6 +437,37 @@ body {
 	text-align: left;
 }
 
+.docs-text-container a {
+	color: white;
+}
+
+.docs-text-container h3, h4, ul {
+	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.docs-text-container code {
+	font-size: 600;
+	background: rgba(255, 255, 255, .3);
+	color: rgba(199, 75, 80, 1);
+	border-radius: 5px;
+	padding: 2pt;
+}
+
+.docs-text-container li {
+	padding-bottom: 5px;
+}
+
+pre code {
+	font-size: 600;
+	background: rgba(255, 255, 255, .3);
+	color: rgba(199, 75, 80, 1);
+	border-radius: 5px;
+	padding: 2pt;
+	display: block;
+	text-align: left;
+	white-space: pre-line;
+}
+
 @media only screen and (min-width: 1200px) {
 	.docs-grid-container {
 		display: grid;
@@ -459,8 +490,4 @@ body {
 	.docs-text-container {
 		grid-area: "body";
 	}
-}
-
-.centered-text {
-	text-align: center;
 }
