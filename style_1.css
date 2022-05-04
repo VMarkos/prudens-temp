@@ -139,6 +139,10 @@ body {
     padding: 20px;
 }
 
+.single-card {
+    grid-template-columns: 1fr;   
+}
+
 .card-container {
     max-width: 400px;
     display: flex;
@@ -197,6 +201,10 @@ body {
         grid-template-rows: 1fr 1fr;
         row-gap: 10px;
         column-gap: 20px;
+    }
+
+    .single-card {
+        grid-template-columns: 1fr;   
     }
 
     .main-container {
@@ -396,6 +404,8 @@ body {
 	justify-content: start;
 	align-items: start;
     border-bottom: 1px solid rgba(255, 255, 255, .3);
+    padding-top: 10px;
+    /* border: 1px solid red; */
 }
 
 .toc-container ul {

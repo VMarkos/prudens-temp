@@ -53,8 +53,8 @@
                 <div id="main-container" class="card-container no-animation">
                     <div class="docs-grid-container">
                     	<div class="toc-container">
+                            <h2>Contents</h2>
                     		<ul id="toc">
-                    			<h2>Contents</h2>
                     		</ul>
                     	</div>
                     	<div class="docs-text-container">
@@ -277,6 +277,27 @@
 									So, <code>R2</code> is an <b>exception</b> to <code>R1</code>, providing certain conditions 
 									under which the general behavior dictated by <code>R1</code> should be violated.
 								</p>
+                                <h3>A More Complex Case</h3>
+                                <p>
+                                    Let us consider the following policy:
+                                </p>
+                                <pre>
+                                    <code>R1 :: f(X, Y) implies g(X);
+                                        R2 :: f(X, 1) implies -g(X);
+                                    </code>
+                                </pre>
+                                <p>
+                                    What would Prudens infer given a context such as <code>f(a,1); f(a,2);</code>?
+                                    As with our previous examples, in this case, we have a setting where <code>R2</code>
+                                    is an exception of <code>R1</code>. That is, whenever a literal of the form 
+                                    <code>f(_,1)</code> appears in our context, then <code>R2</code> will be triggered.
+                                    Since this is the case in our example as well, in our case Prudens will infer 
+                                    <code>-g(a);</code>.
+                                </p>
+                                <p>
+                                    However, removing <code>f(a,1)</code> from our context triggers only <code>R1</code>,
+                                    so in this case <code>g(a)</code> would be inferred.
+                                </p>
                             </div>
                     	</div>
                     </div>
