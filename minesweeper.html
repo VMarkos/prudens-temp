@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="style_1.css" media="screen"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">
+        </link>
+
+        <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js">
+        </script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
+        <!-- <script type="text/javascript" src="parsers.js"></script>
+        <script type="text/javascript" src="utils.js"></script>
+        <script type="text/javascript" src="prudensUtils.js"></script>
+        <script type="text/javascript" src="prudens.js"></script>
+        <script type="text/javascript" src="abduction.js"></script> -->
+        <script type="text/javascript" src="./prudens_web/parsers.js"></script>
+        <script type="text/javascript" src="./prudens_web/prudens.js"></script>
+        <script type="text/javascript" src="./prudens_web/prudensUtils.js"></script>
+        <title>
+            Prudens
+        </title>
+    </head>
+    <body>
+        <div id="navbar-container" class="navbar-container">
+            <div class="navbar-centering-container">
+                <div class="hamburger-menu-container" onclick="burgerMenuDrop()">
+                    <i id="menu-burger" class="fa fa-bars fa-2x"></i>
+                </div>
+                <div class="navbar-logo-container">
+                    <a href="index.html">Prudens</a>
+                </div>
+                <div class="social-icons-container">
+                    <a href="https://github.com/VMarkos/prudens-js"><i class="fa fa-github fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="hamburger-menu" class="hamburger-menu hidden">
+            <div class="menu-options-container">
+                <div id="menu-options-container" class="menu-options-left-align">
+                    <div class="menu-option">
+                        <a href="index.html"><span><i class="fa fa-home"></i> Home</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_web.html"><span><i class="fa fa-window-maximize"></i> Prudens Web</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_api.html"><span><i class="fa fa-gears"></i> Prudens API</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="docs.html"><span><i class="fa fa-book"></i> Learn Prudens</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="research.html"><span><i class="fa fa-flask"></i> Research</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-code-container">
+        	<div id="main-container" class="card-container-padding">
+		        <div class="card-container static">
+		            <div class="code-header-container">
+		                <div class="button-container">
+		                    <div class="prudens-button" onclick="consoleOutput()">
+		                        <i class="fa fa-chevron-right"></i>
+		                        <div>Next</div>
+		                    </div>
+		                </div>
+		            </div>
+		            <div class="minesweeper-grid-container">
+		                <div class="policy-editor-container">
+		                	<div class="code-header-label-container minesweeper-label">
+		                		<div class="code-header-label">
+		                			Policy
+		                		</div>
+		                	</div>
+		                    <div id="policy-container" class="codemirror-container">
+
+		                    </div>
+		                </div>
+                        <div class="gameboard-container">
+                            <div class="minesweeper-label-container minesweeper-label">
+                                <div class="code-header-label">
+                                    Game Board
+                                </div>
+                            </div>
+                            <div class="center-board-container">
+                                <div id="board-container" class="minesweeper-board-container">
+                                    
+                                </div>
+                            </div>
+                        </div>
+		            </div>
+		        </div>
+		    </div>
+        </div>
+        <script type="text/javascript" src="main.js"></script>
+        <script type="text/javascript" src="navbar.js"></script>
+        <script type="text/javascript" src="minesweeper.js"></script>
+    </body>
+</html>

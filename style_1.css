@@ -501,3 +501,101 @@ pre code {
 		grid-area: "body";
 	}
 }
+
+/* Minesweeper */
+
+.minsweeper-grid-container {
+    display: flex;
+	flex-direction: column;
+	/* align-items: stretch; */
+    padding-top: 5px;
+}
+
+.minesweeper-label {
+    justify-content: center;
+}
+
+.minesweeper-label-container {
+    padding-top: 5px;
+	padding-left: 5px;
+}
+
+.gameboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 10px;
+}
+
+@media only screen and (min-width: 1200px) {
+	.minesweeper-grid-container {
+        display: flex;
+		flex-direction: row;
+        gap: 10px;
+	}
+
+    .minesweeper-label {
+        justify-content: start;
+    }
+
+    .minesweeper-label-container {
+        align-self: stretch;
+        padding-top: 5px;
+        padding-left: 5px;
+    }
+    .gameboard-container {
+        border-left: rgba(255, 255, 255, .3) 1px solid;
+    }
+}
+
+.center-board-container {
+    display: flex;
+    flex-direction: column;
+    max-width: fit-content;
+}
+
+.minesweeper-board-container {
+    display: grid;
+    gap: 0px;
+    padding: 5px;
+}
+
+.minesweeper-cell {
+    background-color: #c6c6c6;
+    border-bottom: solid 4px #808080;
+    border-right: solid 4px #808080;
+    border-top: solid 4px white;
+    border-left: solid 4px white;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-family: 'monospace';
+    font-weight: 600;
+    /* color: blue; */
+    align-content: center;
+    text-align: center;
+    line-height: 26px;
+}
+
+.minesweeper-cell.clicked {
+    border-top: 1px solid #808080;
+    border-right: 1px solid #808080;
+    border-left: 1px solid #c6c6c6;
+    border-bottom: 1px solid #c6c6c6;
+    cursor: default;
+    width: 26px;
+    height: 26px;
+}
+
+.minesweeper-cell.bottom {
+    border-bottom: 1px solid #808080;
+}
+
+.minesweeper-cell.left {
+    border-left: 1px solid #808080;
+}
+
+.minesweeper-cell.bottom-left {
+    border-bottom: 1px solid #808080;
+    border-left: 1px solid #808080;
+}
