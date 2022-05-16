@@ -1,8 +1,11 @@
 const ROWS = 12; // Total number of rows.
 const COLS = 10; // Total number of columns.
 const MINES = 10; // Total number of mines.
-let BOARD; // 2D array of integers
-let VISIBLE; //2D boolean array
+let BOARD; // 2D array of integers.
+let VISIBLE; //2D boolean array.
+let VISIBLE_COUNT = 0; // Number of visible cells.
+let PLAYING = true;
+let RESULT;
 
 const CELL_LABELS = {
     "-1": {
@@ -53,6 +56,7 @@ BOARD structure:
 
 function populateBoard() { // Creates all board cells (DIV elements).
     const boardContainer = document.getElementById("board-container");
+    boardContainer.innerHTML = "";
     boardContainer.style.gridTemplateColumns = `repeat(${COLS}, 1fr)`;
     boardContainer.style.gridTemplateRows = `repeat(${ROWS}, 1fr)`;
     let cell;
@@ -86,7 +90,6 @@ function initializeBoard() { // Initializes board with mines and numbers of mine
             row = Math.floor(ROWS * Math.random());
             col = Math.floor(COLS * Math.random());
         } while (BOARD[row][col] === -1);
-        console.log(row, col);
         BOARD[row][col] = -1;
     }
     for (let row = 0; row < ROWS; row++) {
@@ -115,44 +118,45 @@ function countAdjacentMines(row, col) { // Counts mines in adjacent cells.
 }
 
 function unveilSingleCell(cell) {
+	VISIBLE_COUNT++;
     const coords = cell.id.split("-");
     VISIBLE[coords[0]][coords[1]] = true;
     cell.classList.add("clicked");
-    if (coords[0] === "" + (ROWS - 1) && (coords[1] === "0")) {
-        cell.classList.add("bottom-left");
-    } else if (coords[0] === "" + (ROWS - 1)) {
-        cell.classList.add("bottom");
-    } else if (coords[1] === "0") {
-        cell.classList.add("left");
-    }
+    if (cell.id !== LAST_MOVE) {
+		fixBorderCell(cell, coords);
+	}
+    cell.onclick = "none";
     const value = BOARD[coords[0]][coords[1]];
     cell.innerHTML = CELL_LABELS[BOARD[coords[0]][coords[1]]]["label"];
     return value;
 }
 
-function unveilMultipleCells(event) {
+function fixBorderCell(cell, coords) {
+	if (coords[0] === "" + (ROWS - 1) && (coords[1] === "0")) {
+			cell.classList.add("bottom-left");
+		} else if (coords[0] === "" + (ROWS - 1)) {
+			cell.classList.add("bottom");
+		} else if (coords[1] === "0") {
+			cell.classList.add("left");
+		}
+}
+
+function unveilMultipleCells(startCellId) {
     let currentCellId, currentCell, coords, nextCellId;
-    const startCell = event.target;
-    coords = startCell.id.split("-");
-    if (BOARD[coords[0]][coords[1]] !== 0) {
-        unveilSingleCell(startCell);
-        return;
-    }
-    const front = [startCell.id];
+    // const startCell = event.target;
+    const front = [startCellId];
     while (front.length > 0) {
         currentCellId = front.pop();
         currentCell = document.getElementById(currentCellId);
         coords = currentCellId.split("-");
         unveilSingleCell(currentCell);
         if (BOARD[coords[0]][coords[1]] !== 0) {
-            // unveilSingleCell(currentCell);
             continue;
         }
-        // unveilSingleCell(currentCell);
-        const leftCol = "" + Math.max(0, coords[1] - 1);
-        const rightCol = "" + Math.min(COLS - 1, coords[1] + 1);
-        const topRow = "" + Math.max(0, coords[0] - 1);
-        const botRow = "" + Math.min(ROWS - 1, coords[0] + 1);
+        const leftCol = "" + Math.max(0, parseInt(coords[1]) - 1);
+        const rightCol = "" + Math.min(COLS - 1, parseInt(coords[1]) + 1);
+        const topRow = "" + Math.max(0, parseInt(coords[0]) - 1);
+        const botRow = "" + Math.min(ROWS - 1, parseInt(coords[0]) + 1);
         const nextCells = [
             [botRow, leftCol],
             [botRow, rightCol],
@@ -163,15 +167,11 @@ function unveilMultipleCells(event) {
             [coords[0], leftCol],
             [coords[0], rightCol],
         ];
-        console.log(coords, nextCells);
-        debugger;
         for (const nextCellCoords of nextCells) {
-            // console.log(nextCellCoords);
             if (nextCellCoords[0] === coords[0] && nextCellCoords[1] === coords[1]) {
                 continue;
             }
             nextCellId = nextCellCoords[0] + "-" + nextCellCoords[1];
-            // nextCell = document.getElementById(nextCellId);
             if (!VISIBLE[nextCellCoords[0]][nextCellCoords[1]] && BOARD[nextCellCoords[0]][nextCellCoords[1]] > 0) {
                 unveilSingleCell(document.getElementById(nextCellId));
             } else if (!VISIBLE[nextCellCoords[0]][nextCellCoords[1]] && BOARD[nextCellCoords[0]][nextCellCoords[1]] === 0 && !front.includes(nextCellId)) {
@@ -181,8 +181,51 @@ function unveilMultipleCells(event) {
     }
 }
 
+function isWin() {
+	return VISIBLE_COUNT === ROWS * COLS - MINES;
+}
+
+function gameOver() {
+	let cell;
+	for (let row = 0; row < ROWS; row++) {
+		for (let col = 0; col < COLS; col++) {
+			if (!VISIBLE[row][col]) {
+				cell = document.getElementById(row + "-" + col);
+				cell.classList.add("clicked");
+				cell.innerHTML = CELL_LABELS[BOARD[row][col]]["label"];
+			}
+		}
+	}
+}
+
+function nextMove(moveFunction=randomMove) {
+	if (!PLAYING) {
+		startNewGameDialogue("Game over!");
+		return;
+	}
+	const move = moveFunction();
+	if (move === -1) {
+		gameOver();
+		PLAYING = false;
+		startNewGameDialogue("You lost!");
+	} else if (move === 1) {
+		gameOver();
+		PLAYING = false;
+		startNewGameDialogue("You won!");
+	}
+}
+
+function startNewGameDialogue(result) {
+	const newGame = confirm(`${result} Start another game?`);
+		if (newGame) {
+			populateBoard();
+			PLAYING = true;
+		}
+}
+
 function main() {
     populateBoard();
+	// var agent = new RandomAgent();
 }
 
 main();
