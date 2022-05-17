@@ -66,22 +66,12 @@ function parseValues(values) {
 }
 
 function contextParser() {
-    const context = document.getElementById(tab + "-context").value; // FIXME Use the get context function! :)
+    const context = extractContext();
     const contextList = parseContext(context);
     // console.log(contextList);
     if (contextList["type"] === "error") {
         return contextList;
     }
-    // contextList["context"].push({
-    //     name: "true",
-    //     sign: true,
-    //     isJS: false,
-    //     isEquality: false,
-    //     isInequality: false,
-    //     isAction: false,
-    //     args: undefined,
-    //     arity: 0,
-    // });
     return contextList;
 }
 

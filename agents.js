@@ -19,7 +19,17 @@ function randomMove() {
 }
 
 function prudensMove() { // Infers all legible moves according to the provided policy and then choses at random (this might need to be changed).
-	const inferences = deduce().split(";");
+	const inferences = deduce().split(";").filter(Boolean);
+	const safeCells = [];
+	console.log("inferences:", inferences);
+	for (const literal of inferences) {
+		if (literal.substring(5) === "safe(") {
+			safeCells.push(literal);
+		}
+	}
+	if (safeCells.length === 0) {
+		return randomMove();
+	}
 	const moveLiteral = inferences[Math.floor(inferences.length * Math.random())].trim();
 	const coords = moveLiteral.substring(5, moveLiteral.length - 1).split(",");
 	const row = coords[0].trim();
@@ -59,10 +69,15 @@ function extractContext() { // Convert a minesweeper board to a Prudens context.
 	let contextString = "";
 	for (let row = 0; row < ROWS; row++) {
 		for (let col = 0; col < COLS; col++) {
-			if (!VISIBLE[row][col]) {
-				continue;
-			}
 			contextString +=  "cell(" + row + "," + col + "," + BOARD[row][col] + ");";
 		}
 	}
+	return contextString;
 }
+
+/*
+Notes in NL about Minesweeper policy:
+	* The overall idea is, given a cell, to check its visible neighboring cells and any numbers on them and conclude on their
+		* safety
+	* For instance, given a cell that has around it ones, we can make sure that it has a mine in it and is, thus, not safe.
+*/
