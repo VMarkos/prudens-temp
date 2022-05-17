@@ -18,6 +18,24 @@ function randomMove() {
 	return 0;
 }
 
+function prudensMove() { // Infers all legible moves according to the provided policy and then choses at random (this might need to be changed).
+	const inferences = deduce().split(";");
+	const moveLiteral = inferences[Math.floor(inferences.length * Math.random())].trim();
+	const coords = moveLiteral.substring(5, moveLiteral.length - 1).split(",");
+	const row = coords[0].trim();
+	const col = coords[1].trim();
+	const cellId = row + "-" + col;
+	updateLastMove(cellId);
+	if (BOARD[row][col] === -1) {
+		return -1;
+	}
+	unveilMultipleCells(cellId);
+	if (isWin()) {
+		return 1;
+	}
+	return 0;
+}
+
 function updateLastMove(cellId) {
 	const cell = document.getElementById(cellId);
 	cell.classList.add("last-move");
@@ -32,9 +50,19 @@ function updateLastMove(cellId) {
 /*
 Minesweeper Language:
 	* cell(Row, Col, Content) // Row = {0,1,...,ROWS}, Col = {1,2,...,COLS}, Content = {0,1,...,8}, where 0 = empty;
+	* safe(Row, Col) // Row = {0,1,...,ROWS}, Col = {1,2,...,COLS};
 	* That's all. You may also need some work with ?= to evaluate math expressions (use eval() carefully, though).
+	* Alternatively, you may define a neighborOf(X, Y, **args) predicate which identifies X as a neighbour of Y.
  */
 
 function extractContext() { // Convert a minesweeper board to a Prudens context.
-	
+	let contextString = "";
+	for (let row = 0; row < ROWS; row++) {
+		for (let col = 0; col < COLS; col++) {
+			if (!VISIBLE[row][col]) {
+				continue;
+			}
+			contextString +=  "cell(" + row + "," + col + "," + BOARD[row][col] + ");";
+		}
+	}
 }
