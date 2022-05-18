@@ -30,6 +30,7 @@ let policyEditor = CodeMirror(policyContainer, {
   value: TEST_POLICY,
   theme: "monokai",
   mode: "prudens",
+  lineWrapping: true,
 });
 
 policyEditor.setSize(400, 640);
@@ -66,4 +67,22 @@ function deduce() {
   }
   // console.log(graph);
   return contextToString(inferences);
+}
+
+function displayInfo(event) {
+    const msMainCard = document.getElementById("minesweeper-main-card");
+    const msHelp = document.getElementById("minesweeper-help");
+    msMainCard.classList.remove("static");
+    msMainCard.classList.remove("hashover");
+    // msMainCard.offsetWidth;
+    msMainCard.classList.add("shrink-to-center");
+    setTimeout(
+        () => {
+            msMainCard.classList.add("no-display");
+            msHelp.classList.remove("no-display");
+            msHelp.offsetHeight;
+            msHelp.classList.add("unshrink-from-center");
+        },
+        600
+    );
 }

@@ -62,14 +62,19 @@
         </div>
         <div class="main-code-container">
         	<div id="main-container" class="card-container-padding">
-		        <div class="card-container static">
+		        <div id="minesweeper-main-card" class="shrinking-card-container">
 		            <div class="code-header-container">
 		                <div class="button-container">
 		                    <div class="prudens-button" onclick="nextMove(prudensMove)">
 		                        <i class="fa fa-chevron-right"></i>
-		                        <div>Next</div>
+		                        <div id="play-button-text">Start</div>
 		                    </div>
 		                </div>
+                        <div class="minesweeper-taskbar-container">
+                            <div class="taskbar-icon-container" onclick="displayInfo(event)">
+                                <i class="fa fa-info fa-2x"></i>
+                            </div>
+                        </div>
 		            </div>
 		            <div class="minesweeper-grid-container">
 		                <div class="policy-editor-container">
@@ -96,6 +101,30 @@
                         </div>
 		            </div>
 		        </div>
+                <div id="minesweeper-help" class="card-container static no-display">
+                    <div class="minesweeper-help-header-container">
+                        <div class="minesweeper-taskbar-container">
+                            <div class="taskbar-icon-container">
+                                <i class="fa fa-close fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="minesweeper-help-text-container">
+                        <h2>Minesweeper's Language</h2>
+                        <p>
+                            Minesweeper's language is pretty simple. Apart from any built-in Prudens predicates, the language also provides another predicate, <code>cell(Row, Col, N)</code>, describing each cell and its content,
+                            in case it is known to the agent. Namely, in <code>cell(Row, Col, N)</code>:
+                        </p>
+                        <ul>
+                            <li><code>Row</code> corresponds to the row in which the cell lies (top row = 0);</li>
+                            <li><code>Col</code> corresponds to the column in which the cell lies (left column = 0);</li>
+                            <li><code>N</code> corresponds to the cell's content (1, 2, ..., 8 for the number of adjacent mines or 0 for empty cells) if known, or <code>-1</code> otherwise.</li>
+                        </ul>
+                        <p>
+                            Some more text that fills up some space instead of Lorem Ipsum.
+                        </p>
+                    </div>
+                </div>
 		    </div>
         </div>
         <script type="text/javascript" src="minesweeperMain.js"></script>

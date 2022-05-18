@@ -23,7 +23,7 @@ function prudensMove() { // Infers all legible moves according to the provided p
 	const safeCells = [];
 	console.log("inferences:", inferences);
 	for (const literal of inferences) {
-		if (literal.substring(5) === "safe(") {
+		if (literal.trim().substring(5) === "safe(") {
 			safeCells.push(literal);
 		}
 	}
@@ -69,7 +69,11 @@ function extractContext() { // Convert a minesweeper board to a Prudens context.
 	let contextString = "";
 	for (let row = 0; row < ROWS; row++) {
 		for (let col = 0; col < COLS; col++) {
-			contextString +=  "cell(" + row + "," + col + "," + BOARD[row][col] + ");";
+			if (!VISIBLE[row][col]) {
+				contextString +=  "cell(" + row + "," + col + "," + -1 + ");";
+			} else {
+				contextString +=  "cell(" + row + "," + col + "," + BOARD[row][col] + ");";
+			}
 		}
 	}
 	return contextString;

@@ -1,10 +1,10 @@
-const ROWS = 12; // Total number of rows.
-const COLS = 10; // Total number of columns.
+const ROWS = 8; // Total number of rows.
+const COLS = 8; // Total number of columns.
 const MINES = 10; // Total number of mines.
 let BOARD; // 2D array of integers.
 let VISIBLE; //2D boolean array.
 let VISIBLE_COUNT = 0; // Number of visible cells.
-let PLAYING = true;
+let PLAYING = false;
 let RESULT;
 
 const CELL_LABELS = {
@@ -67,7 +67,7 @@ function populateBoard() { // Creates all board cells (DIV elements).
             cell.classList.add("minesweeper-cell");
             cell.style.color = CELL_LABELS[BOARD[row][col]]["color"];
             cell.id = row + "-" + col;
-            cell.onclick = function () { return unveilMultipleCells(event); };
+            // cell.onclick = function () { return unveilMultipleCells(event); };
             boardContainer.appendChild(cell);
         }
     }
@@ -200,17 +200,22 @@ function gameOver() {
 
 function nextMove(moveFunction=randomMove) {
 	if (!PLAYING) {
-		startNewGameDialogue("Game over!");
-		return;
+        console.log("Not Playing!");
+        populateBoard();
+        console.log("Board populated!");
+		PLAYING = true;
+        document.getElementById("play-button-text").innerHTML = "Next";
 	}
 	const move = moveFunction();
 	if (move === -1) {
 		gameOver();
 		PLAYING = false;
+        document.getElementById("play-button-text").innerHTML = "Start";
 		startNewGameDialogue("You lost!");
 	} else if (move === 1) {
 		gameOver();
 		PLAYING = false;
+        document.getElementById("play-button-text").innerHTML = "Start";
 		startNewGameDialogue("You won!");
 	}
 }
@@ -219,7 +224,8 @@ function startNewGameDialogue(result) {
 	const newGame = confirm(`${result} Start another game?`);
 		if (newGame) {
 			populateBoard();
-			PLAYING = true;
+            // document.getElementById("play-button-text").innerHTML = "Next";
+			// PLAYING = true;
 		}
 }
 

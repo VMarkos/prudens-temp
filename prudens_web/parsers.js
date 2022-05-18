@@ -94,7 +94,7 @@ function parseContext(context) {
         }
     }
     const spacingRe = /(\t|\r|\n|\v|\f|\s)*/;
-    const varNameRe = /(([a-zA-Z0-9]\w*)|(\d+[.]?\d*)|(\[(\s*\w+,\s*)*\s*\w+\s*\]))/; // FIXME This has been altered recently, allowing for variables in contexts!
+    const varNameRe = /(([a-zA-Z0-9]\w*)|([-]?\d+[.]?\d*)|(\[(\s*\w+,\s*)*\s*\w+\s*\]))/; // FIXME This has been altered recently, allowing for variables in contexts!
     const predicateNameRe = /-?[a-z]\w*/;
     const casualPredicateRe = RegExp(predicateNameRe.source + String.raw`\((\s*` + varNameRe.source + String.raw`\s*,)*\s*` + varNameRe.source + String.raw`\s*\)`);
     const propositionalPredicateRe = /-?[a-z]\w*/;

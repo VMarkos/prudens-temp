@@ -143,7 +143,7 @@ body {
     grid-template-columns: 1fr;   
 }
 
-.card-container {
+.card-container, .shrinking-card-container {
     max-width: 400px;
     display: flex;
     flex-direction: column;
@@ -164,20 +164,20 @@ body {
     transform: scale(1.02);
 }
 
-.card-container h2 {
+.card-container h2, .shrinking-card-container h2 {
     font-family:'Consolas', 'Ubuntu Mono', 'monospace';
     font-size: xx-large;
     font-weight: 600;
 }
 
-.card-container p {
+.card-container p, .shrinking-card-container p {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: large;
     font-weight: 500;
     text-align: center;
 }
 
-.card-container i {
+.card-container i, .shrinking-card-container i {
     color: white;
 }
 
@@ -190,8 +190,13 @@ body {
     transform: none;
 }
 
-.static {
+.static, .shrinking-card-container {
     align-items: stretch;
+}
+
+.shrinking-card-container {
+    cursor: auto;
+    max-width: 1000px;
 }
 
 @media only screen and (min-width: 1200px) {
@@ -568,7 +573,7 @@ pre code {
     border-left: solid 4px white;
     width: 20px;
     height: 20px;
-    cursor: pointer;
+    /* cursor: pointer; */
     font-family: 'monospace';
     font-weight: 600;
     align-content: center;
@@ -604,4 +609,65 @@ pre code {
 .minesweeper-cell.bottom-left {
     border-bottom: 1px solid #808080;
     border-left: 1px solid #808080;
+}
+
+.minesweeper-taskbar-container {
+    display: flex;
+    gap: 10px;
+}
+
+.taskbar-icon-container {
+    border-radius: 5px;
+    padding: 5px 10px 5px 10px;
+    cursor: pointer;
+}
+
+.taskbar-icon-container:hover {
+    background-color: rgba(255, 255, 255, .1);
+}
+
+/* Minesweeper help */
+
+.minesweeper-help-header-container{
+    display: flex;
+    justify-content: end;
+}
+
+.minesweeper-help-text-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    align-items: flex-start;
+}
+
+.minesweeper-help-text-container p {
+    text-align: left;
+}
+
+.minesweeper-help-text-container code {
+	font-size: 600;
+	background: rgba(255, 255, 255, .3);
+	color: rgba(199, 75, 80, 1);
+	border-radius: 5px;
+	padding: 2pt;
+}
+
+.minesweeper-help-text-container li {
+	padding-bottom: 5px;
+}
+
+.shrink-to-center {
+    transform: scale(0);
+    transition-duration: 600ms;
+    transition-timing-function: cubic-bezier(.3, -.5, .7, 1.5);
+}
+
+.no-display {
+    max-height: 0;
+}
+
+.unsrhink-from-center {
+    transform: scale(1);
+    transition-duration: 600ms;
+    transition-timing-function: cubic-bezier(.3, -.5, .7, 1.5);
 }
