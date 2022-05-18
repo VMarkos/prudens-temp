@@ -1,14 +1,18 @@
 html, body {
-    height: 100%;
     padding: 0px;
     margin: 0px;
 }
 
+html {
+	height: 100%;
+}
+
 body {
+	min-height: 100%;
     display: flex;
     flex-direction: column;
     background: rgb(70,36,60);
-    background: linear-gradient(90deg, rgba(70,36,60,1) 0%, rgba(113,43,117,1) 35%, rgba(199,75,80,1) 100%); 
+    background: linear-gradient(90deg, rgba(70,36,60,1) 0%, rgba(113,43,117,1) 35%, rgba(199,75,80,1) 100%);
 }
 
 /* Navbar */
@@ -104,12 +108,6 @@ body {
     transform: scale(1.02);
 }
 
-/* 
-.hamburger-menu::before {
-    -webkit-backdrop-filter: blur(100px);
-    backdrop-filter: blur(100px);
-} */
-
 .navbar-logo-container {
     font-family:'Consolas', 'Ubuntu Mono', 'monospace';
     font-size: xx-large;
@@ -124,7 +122,8 @@ body {
 /* Cards */
 
 .main-container {
-    height: 100%;
+	flex: 1;
+    /* height: 100%; */
     /* display: flex; */
     /* padding-top: 20px;
     padding-bottom: 20px; */
@@ -223,15 +222,6 @@ body {
 
 .main-code-coontainer {
     display: contents;
-}
-
-@media only screen and (min-width: 1200px) {
-    .main-code-container {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
 }
 
 .code-header-container {
@@ -656,18 +646,25 @@ pre code {
 	padding-bottom: 5px;
 }
 
+.minesweeper-help-text-container a {
+	color: white;
+}
+
 .shrink-to-center {
     transform: scale(0);
     transition-duration: 600ms;
-    transition-timing-function: cubic-bezier(.3, -.5, .7, 1.5);
+    transition-timing-function: cubic-bezier(.3, -.5, 1, 1);
 }
 
 .no-display {
-    max-height: 0;
+    display: none;
+}
+
+.invisible {
+	scale: 0%;
 }
 
 .unsrhink-from-center {
-    transform: scale(1);
     transition-duration: 600ms;
-    transition-timing-function: cubic-bezier(.3, -.5, .7, 1.5);
+    transition-timing-function: cubic-bezier(0, 0, .7, 1.5);
 }

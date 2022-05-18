@@ -12,15 +12,11 @@
         src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js">
         </script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
-        <!-- <script type="text/javascript" src="parsers.js"></script>
-        <script type="text/javascript" src="utils.js"></script>
-        <script type="text/javascript" src="prudensUtils.js"></script>
-        <script type="text/javascript" src="prudens.js"></script>
-        <script type="text/javascript" src="abduction.js"></script> -->
         <script type="text/javascript" src="./prudens_web/parsers.js"></script>
         <script type="text/javascript" src="./prudens_web/prudens.js"></script>
         <script type="text/javascript" src="./prudens_web/prudensUtils.js"></script>
         <script type="text/javascript" src="agents.js"></script>
+        <script type="text/javascript" src="simpleMode.js"></script>
         <title>
             Prudens
         </title>
@@ -101,10 +97,10 @@
                         </div>
 		            </div>
 		        </div>
-                <div id="minesweeper-help" class="card-container static no-display">
+                <div id="minesweeper-help" class="shrinking-card-container no-display invisible">
                     <div class="minesweeper-help-header-container">
                         <div class="minesweeper-taskbar-container">
-                            <div class="taskbar-icon-container">
+                            <div class="taskbar-icon-container" onclick="displayBoard()">
                                 <i class="fa fa-close fa-2x"></i>
                             </div>
                         </div>
@@ -112,7 +108,8 @@
                     <div class="minesweeper-help-text-container">
                         <h2>Minesweeper's Language</h2>
                         <p>
-                            Minesweeper's language is pretty simple. Apart from any built-in Prudens predicates, the language also provides another predicate, <code>cell(Row, Col, N)</code>, describing each cell and its content,
+                            Minesweeper's language is pretty simple. Apart from any built-in Prudens predicates, the language also provides two more predicates, <code>cell(Row, Col, N)</code>, and <code>safe(Row, Col)</code>.
+                            The former, <code>cell(Row, Col, N)</code>, describes each cell and its content,
                             in case it is known to the agent. Namely, in <code>cell(Row, Col, N)</code>:
                         </p>
                         <ul>
@@ -121,8 +118,38 @@
                             <li><code>N</code> corresponds to the cell's content (1, 2, ..., 8 for the number of adjacent mines or 0 for empty cells) if known, or <code>-1</code> otherwise.</li>
                         </ul>
                         <p>
-                            Some more text that fills up some space instead of Lorem Ipsum.
+                            Regarding the second predicate of Minesweeper's language, <code>safe(Row, Col)</code> indicates that 
+                            a cell at row <code>Row</code> and column <code>Col</code> is safe, i.e., that it is considered
+                            to contain no mines. The <code>safe(Row, Col)</code> is quite important since based on that the
+                            agent actually decides its next move. Namely, in this version, the agent examines which cells have 
+                            been tagged as <code>safe</code> and randomly chooses one of them as its next move - in case no such
+                            cell exists, it choses randomly.
                         </p>
+                        <h2>A Simple Example</h2>
+                        <p>
+							A very simple policy could be the following one:
+                        </p>
+                        <pre>
+							<code>R1 :: cell(X, Y, 0) implies safe(X, Y);</code>
+                        </pre>
+                        <p>
+							That is, any cell that is not yet opened should be considered a safe one. Evidently, the above is not
+							a sustainable strategy, since it is actually equivalent to playing at random. So, on top of that,
+							we may make the following exception:
+                        </p>
+                        <pre>
+							<code>R1 :: cell(X, Y, 0) implies safe(X, Y);
+							R2 :: cell(X, Y, 0), ?=(X + 1, Z), cell(Z, Y, 8) implies -safe(Z, Y);</code>
+                        </pre>
+                        <p>
+							While somewhat cryptic, the above encodes in Prudens's language the following simple statement: "In case
+							there is an 8 below an empty cell, then this cell is not safe (i.e., contains a mine)." The "below" in
+							the previous statement is captured by <code>X + 1</code> (i.e., a row below <code>X</code>). In a similar
+							fashion, one may add rules regarding all neighboring cells that may contain an 8.
+                        </p>
+                        <p>
+							<i>For more on Prudens's Language, <a href="docs.html">read the Docs!</a></i>
+						</p>
                     </div>
                 </div>
 		    </div>

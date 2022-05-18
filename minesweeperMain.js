@@ -21,6 +21,53 @@ R8 :: northWestHas(X, Y, 1) implies mine(X, Y);
 
 Conflict01 :: mine(X, Y) # safe(X, Y);`
 
+CodeMirror.defineSimpleMode("simplemode", {
+  // The start state contains the rules that are initially used
+  start: [
+    // The regex matches the token, the token property contains the type
+    {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+    // You can match multiple tokens at once. Note that the captured
+    // groups must span the whole string in this case
+    {regex: /(([A-Z]\w*)(?=(\s*,|\))))/,
+     token: "variable-3"},
+    {regex: /(([a-z]\w*)(?=(\s*,|\))))/,
+     token: "variable-2"},
+    // Rules are matched in the order in which they appear, so there is
+    // no ambiguity between this one and the one above
+    {regex: /(implies|::|@KnowledgeBase|@Code)/,
+     token: "keyword"},
+    {regex: /(\w+)(?=(\s*)(::))/, token: "variable-3"},
+    {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,
+     token: "number"},
+    {regex: /\/\/.*/, token: "comment"},
+    {regex: /(([a-z]\w+)(?=(\())|(\?=))/, token: "atom"},
+    // A next property will cause the mode to move to a different state
+    {regex: /\/\//, token: "comment"},
+    {regex: /[-+\/*=<>!#]+/, token: "operator"},
+    // indent and dedent properties guide autoindentation
+    {regex: /[\{\[\(]/, indent: true},
+    {regex: /[\}\]\)]/, dedent: true},
+    {regex: /[a-z$][\w$]*/, token: "variable"},
+    // You can embed other modes with the mode property. This rule
+    // causes all code between << and >> to be highlighted with the XML
+    // mode.
+    {regex: /<</, token: "meta", mode: {spec: "xml", end: />>/}}
+  ],
+  // The multi-line comment state.
+  comment: [
+    {regex: /.*?\*\//, token: "comment", next: "start"},
+    {regex: /.*/, token: "comment"}
+  ],
+  // The meta property contains global information about the mode. It
+  // can contain properties like lineComment, which are supported by
+  // all modes, and also directives like dontIndentStates, which are
+  // specific to simple modes.
+  meta: {
+    dontIndentStates: ["comment"],
+    lineComment: "//"
+  }
+});
+
 let policyContainer = document.getElementById("policy-container");
 
 let policyEditor = CodeMirror(policyContainer, {
@@ -29,7 +76,7 @@ let policyEditor = CodeMirror(policyContainer, {
   gutter: true,
   value: TEST_POLICY,
   theme: "monokai",
-  mode: "prudens",
+  mode: "simplemode",
   lineWrapping: true,
 });
 
@@ -50,38 +97,37 @@ function deduce() {
   if (contextObject["type"] === "error") {
       return "ERROR: " + contextObject["name"] + ":\n" + contextObject["message"];
   }
-  // console.log(kbObject);
   console.log(contextObject); // TODO fix some context parsing issue (in propositional cases it includes the semicolon into the name of the prop)
   const output = forwardChaining(kbObject, contextObject["context"]);
-  // console.log(output);
   const inferences = output["facts"];
-  const graph = output["graph"];
-  // console.log("Inferences:");
-  // console.log(inferences);
-  const outputString = "";
-  if (warnings.length > 0) {
-      outputString += "Warnings:\n";
-  }
-  for (const warning of warnings) {
-      outputString += warning["name"] + ": " + warning["message"] + "\n";
-  }
   // console.log(graph);
   return contextToString(inferences);
 }
 
-function displayInfo(event) {
+function displayInfo() {
     const msMainCard = document.getElementById("minesweeper-main-card");
     const msHelp = document.getElementById("minesweeper-help");
-    msMainCard.classList.remove("static");
-    msMainCard.classList.remove("hashover");
-    // msMainCard.offsetWidth;
-    msMainCard.classList.add("shrink-to-center");
+    changeTabs(msMainCard, msHelp);
+}
+
+function displayBoard() {
+	const msMainCard = document.getElementById("minesweeper-main-card");
+    const msHelp = document.getElementById("minesweeper-help");
+    changeTabs(msHelp, msMainCard);
+}
+
+function changeTabs(e1, e2) {
+    e1.classList.add("shrink-to-center");
     setTimeout(
         () => {
-            msMainCard.classList.add("no-display");
-            msHelp.classList.remove("no-display");
-            msHelp.offsetHeight;
-            msHelp.classList.add("unshrink-from-center");
+            e1.classList.add("no-display");
+            e1.classList.add("invisible");
+            e1.style.scale = "0%";
+            e2.classList.remove("shrink-to-center");
+            e2.classList.remove("no-display");
+            e2.classList.remove("inivisible");
+            e2.offsetHeight;
+            e2.style.scale = "100%";
         },
         600
     );
