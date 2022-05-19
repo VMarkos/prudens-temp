@@ -65,24 +65,9 @@ function parseValues(values) {
     return argumentValues;
 }
 
-function contextParser() {
-    const context = extractContext();
-    const contextList = parseContext(context);
-    // console.log(contextList);
-    if (contextList["type"] === "error") {
-        return contextList;
-    }
-    return contextList;
-}
-
 function targetParser() {
     const targets = document.getElementById(tab + "-targets").value;
     return parseTarget(targets);
-}
-
-function kbParser() {
-    const kbAll = policyEditor.getValue();
-    return parseKB(kbAll);
 }
 
 function parseContext(context) {

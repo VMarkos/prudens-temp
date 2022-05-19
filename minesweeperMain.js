@@ -1,4 +1,4 @@
-const TEST_POLICY = `@KnowledgeBase
+const OLD_POLICY = `@KnowledgeBase
 South :: cell(Row, Col, N), ?=(Row + 1, X), cell(X, Col, M) implies southHas(Row, Col, M);
 North :: cell(Row, Col, N), ?=(Row - 1, X), cell(X, Col, M) implies northHas(Row, Col, M);
 East :: cell(Row, Col, N), ?=(Col + 1, X), cell(Row, X, M) implies eastHas(Row, Col, M);
@@ -21,52 +21,10 @@ R8 :: northWestHas(X, Y, 1) implies mine(X, Y);
 
 Conflict01 :: mine(X, Y) # safe(X, Y);`
 
-CodeMirror.defineSimpleMode("simplemode", {
-  // The start state contains the rules that are initially used
-  start: [
-    // The regex matches the token, the token property contains the type
-    {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
-    // You can match multiple tokens at once. Note that the captured
-    // groups must span the whole string in this case
-    {regex: /(([A-Z]\w*)(?=(\s*,|\))))/,
-     token: "variable-3"},
-    {regex: /(([a-z]\w*)(?=(\s*,|\))))/,
-     token: "variable-2"},
-    // Rules are matched in the order in which they appear, so there is
-    // no ambiguity between this one and the one above
-    {regex: /(implies|::|@KnowledgeBase|@Code)/,
-     token: "keyword"},
-    {regex: /(\w+)(?=(\s*)(::))/, token: "variable-3"},
-    {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i,
-     token: "number"},
-    {regex: /\/\/.*/, token: "comment"},
-    {regex: /(([a-z]\w+)(?=(\())|(\?=))/, token: "atom"},
-    // A next property will cause the mode to move to a different state
-    {regex: /\/\//, token: "comment"},
-    {regex: /[-+\/*=<>!#]+/, token: "operator"},
-    // indent and dedent properties guide autoindentation
-    {regex: /[\{\[\(]/, indent: true},
-    {regex: /[\}\]\)]/, dedent: true},
-    {regex: /[a-z$][\w$]*/, token: "variable"},
-    // You can embed other modes with the mode property. This rule
-    // causes all code between << and >> to be highlighted with the XML
-    // mode.
-    {regex: /<</, token: "meta", mode: {spec: "xml", end: />>/}}
-  ],
-  // The multi-line comment state.
-  comment: [
-    {regex: /.*?\*\//, token: "comment", next: "start"},
-    {regex: /.*/, token: "comment"}
-  ],
-  // The meta property contains global information about the mode. It
-  // can contain properties like lineComment, which are supported by
-  // all modes, and also directives like dontIndentStates, which are
-  // specific to simple modes.
-  meta: {
-    dontIndentStates: ["comment"],
-    lineComment: "//"
-  }
-});
+const TEST_POLICY = `@KnowledgeBase
+BaseCase :: cell(X, Y, 0) implies safe(X, Y);
+
+R1 :: cell(X, Y, 0), ?=(X + 1, Xp), ?=(Y + 1, Yp), cell(Xp, Yp, 1), ?=(Xp + 1, Xb), ?=(Yp + 1, Yr), cell(Xb, Yp, Mbp), cell(Xb, Yr, Mbr), cell(Xb, Y, Mby), cell(X, Yr, Mxr), cell(X, Yp, Mxp), cell(Xp, Y, Mpy), cell(Xp, Yr, Mpr), -?=(Mbp, -1), -?=(Mbr, -1), -?=(Mby, -1), -?=(Mxr, -1), -?=(Mxp, -1), -?=(Mpy, -1), -?=(Mpr, -1) implies -safe(X, Y);`
 
 let policyContainer = document.getElementById("policy-container");
 
@@ -86,14 +44,14 @@ policyEditor.setSize(400, 640);
 Formerly utils.js
 */
 
-function deduce() {
+function msDeduce() {
   "use strict";
-  const kbObject = kbParser();
+  const kbObject = msKbParser();
   if (kbObject["type"] === "error") {
       return "ERROR: " + kbObject["name"] + ":\n" + kbObject["message"];
   }
   const warnings = kbObject["warnings"];
-  const contextObject = contextParser();
+  const contextObject = msContextParser();
   if (contextObject["type"] === "error") {
       return "ERROR: " + contextObject["name"] + ":\n" + contextObject["message"];
   }
@@ -102,6 +60,21 @@ function deduce() {
   const inferences = output["facts"];
   // console.log(graph);
   return contextToString(inferences);
+}
+
+function msKbParser() {
+  const kbAll = policyEditor.getValue();
+  return parseKB(kbAll);
+}
+
+function msContextParser() {
+  const context = extractContext();
+  const contextList = parseContext(context);
+  // console.log(contextList);
+  if (contextList["type"] === "error") {
+      return contextList;
+  }
+  return contextList;
 }
 
 function displayInfo() {

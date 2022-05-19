@@ -19,7 +19,7 @@ function randomMove() {
 }
 
 function prudensMove() { // Infers all legible moves according to the provided policy and then choses at random (this might need to be changed).
-	const inferences = deduce().split(";").filter(Boolean);
+	const inferences = msDeduce().split(";").filter(Boolean);
 	const safeCells = [];
 	console.log("inferences:", inferences);
 	for (const literal of inferences) {

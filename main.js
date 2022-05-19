@@ -8,7 +8,7 @@ let policyEditor = CodeMirror(policyContainer, {
   gutter: true,
   value: '@KnowledgeBase\n',
   theme: "monokai",
-  mode: "prudens",
+  mode: "simplemode",
 });
 
 policyEditor.setSize(400, 640);
@@ -18,7 +18,7 @@ let contextEditor = CodeMirror(contextContainer, {
   tabSize: 2,
   gutter: true,
   theme: "monokai",
-  mode: "prudens",
+  mode: "simplemode",
 });
 
 contextEditor.setSize(400, 300);
@@ -100,6 +100,21 @@ function deduce() {
   }
   // console.log(graph);
   return outputString + "Context: " + contextToString(contextObject["context"]) + "\nInferences: " + contextToString(inferences) + "\nGraph: " + graphToString(graph);
+}
+
+function kbParser() {
+  const kbAll = policyEditor.getValue();
+  return parseKB(kbAll);
+}
+
+function contextParser() {
+  const context = contextEditor.getValue();
+  const contextList = parseContext(context);
+  // console.log(contextList);
+  if (contextList["type"] === "error") {
+      return contextList;
+  }
+  return contextList;
 }
 
 function consoleOutput() {
