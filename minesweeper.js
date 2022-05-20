@@ -191,8 +191,9 @@ function gameOver() {
 		for (let col = 0; col < COLS; col++) {
 			if (!VISIBLE[row][col] && BOARD[row][col] === -1) {
 				cell = document.getElementById(row + "-" + col);
-				cell.classList.add("clicked");
-				cell.innerHTML = CELL_LABELS[BOARD[row][col]]["label"];
+				unveilSingleCell(cell);
+				// cell.classList.add("clicked");
+				// cell.innerHTML = CELL_LABELS[BOARD[row][col]]["label"];
 			}
 		}
 	}
