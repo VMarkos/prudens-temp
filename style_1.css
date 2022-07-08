@@ -409,7 +409,7 @@ body {
     right: 5px; */
 	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 	color: white;
-	font-size: 600;
+	font-size: 16pt;
 	text-align: left;
 	list-style-type: none;
     padding: 0;
@@ -430,6 +430,14 @@ body {
 	background: rgba(255, 255, 255, .1);
 }
 
+.toc-container-h3 {
+    font-size: 12pt;
+}
+
+.toc-entry-hidden {
+    display: none;
+}
+
 .toc-active {
     background: rgba(255, 255, 255, .3);
 }
@@ -440,18 +448,27 @@ body {
 
 .docs-text-container p {
 	text-align: left;
+    font-size: 14pt;
 }
 
 .docs-text-container a {
 	color: white;
 }
 
-.docs-text-container h3, h4, ul {
+.docs-text-container h3, h4, ul, ol {
 	font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
+.docs-text-container h3 {
+    font-size: 20pt;
+}
+
+.docs-text-container ul, ol {
+    font-size: 14pt;
+}
+
 .docs-text-container code {
-	font-size: 600;
+	font-size: 10pt;
 	background: rgba(255, 255, 255, .3);
 	color: rgba(199, 75, 80, 1);
 	border-radius: 5px;
@@ -462,15 +479,26 @@ body {
 	padding-bottom: 5px;
 }
 
-pre code {
+.docs-text-container math {
+    font-family: 'Cambria', 'Cochin', Georgia, Times, 'Times New Roman', serif;
+    font-size: 14pt;
+}
+
+pre > code {
 	font-size: 600;
 	background: rgba(255, 255, 255, .3);
 	color: rgba(199, 75, 80, 1);
 	border-radius: 5px;
-	padding: 2pt;
+    border-left: 4px white solid;
 	display: block;
 	text-align: left;
 	white-space: pre-line;
+    /* border: 1px solid red; */
+}
+
+.quote-text {
+    padding-left: 20px;
+    border-left: 4px white solid;
 }
 
 @media only screen and (min-width: 1200px) {

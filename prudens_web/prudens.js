@@ -53,6 +53,16 @@ Get all substitutions:
     b. If substitutions is empty and it is not the first iteration, return [];
 */
 
+/*
+FIXME
+@KnowledgeBase
+R1 :: a(X) implies x(X);
+R2 :: b(Y) implies y(Y);
+C1 :: x(Z) # y(Z);
+
+context: a(A); b(B);
+*/
+
 function getSubstitutions(body, facts, code) {
     let substitutions = [undefined]; // If it contains only undefined in the end, then all body literals are propositional symbols and are all included in facts.
     const jsLiterals = [];
@@ -71,11 +81,13 @@ function getSubstitutions(body, facts, code) {
         if (substitutions.includes(undefined)) {
             substitutions = extendByFacts(literal, facts);
         }
+        // console.log("Subs, ln 74:", substitutions);
+        // debugger;
         // console.log("body:", body);
         const toBeRemoved = [];
         const toBePushed = [];
         for (const sub of substitutions) {
-            // console.log("Sub:");
+            //console.log("Sub:");
             // console.log(sub);
             const instance = {};
             for (const key of Object.keys(literal)) {
@@ -83,8 +95,9 @@ function getSubstitutions(body, facts, code) {
                 // console.log("key:", key, instance[key]);
             }
             // console.log("literal:", literal, "\n(pre-apply) body:", instance);
-            instance["args"] = apply(sub, literal["args"]);
+            // instance["args"] = apply(sub, literal["args"]);
             // console.log("(post-apply) body:", instance);
+            // debugger;
             // let instance = {
             //     name: body[i]["name"],
             //     sign: body[i]["sign"],
@@ -101,16 +114,18 @@ function getSubstitutions(body, facts, code) {
                 // console.log("literal/Fact:");
                 // console.log(instance);
                 // console.log(fact);
-                const unifier = unify(instance, fact);
+                const unifier = unify(instance, fact, sub);
                 // console.log("Unifier:");
                 // console.log(unifier);
+                // debugger;
                 if (unifier !== undefined) {
                     const extension = extend(sub, unifier);
                     // console.log("sub:", sub, "\nextension:", extension);
+                    // extended = true;
                     // debugger;
-                    if (unifier !== undefined && extension !== undefined) {
+                    if (extension !== undefined) {
                         toBePushed.push(extension);
-                        extended = true;
+                        extended = true; // This should be here and not outside that "if".
                         if (!toBeRemoved.includes(sub)) {
                             toBeRemoved.push(sub);
                         }
@@ -217,24 +232,33 @@ function listUnification(list1, list2, unifier) {
     return unifier;
 }
 
-function unify(x, y) { // x, y are literals. Assymetric unification since y is assumed to be known/part of some set of inferred facts!
-    "use strict";
+function unify(x, y, sub=undefined) { // x, y are literals. Assymetric unification since y is assumed to be known/part of some set of inferred facts!
     if (x["name"] !== y["name"] || x["arity"] !== y["arity"] || x["sign"] !== y["sign"]) {
         return undefined;
     }
     const xArgs = x["args"];
     const yArgs = y["args"];
     const unifier = {};
+    const expressionIndices = [];
+    let xArg, yArg;
     // console.log("x:", x, "\ny:", y);
     for (let i=0; i<x["arity"]; i++) {
-        let xArg = xArgs[i];
-        let yArg = yArgs[i];
-        if (xArg["isAssigned"] && yArg["isAssigned"] && xArg["value"] !== yArg["value"]) {
-            // console.log("Here?");
-            // console.log(xArg);
-            // console.log(yArg);
-            // debugger;
-            return undefined;
+        xArg = xArgs[i];
+        yArg = yArgs[i];
+        if (xArg["isExpression"] || yArg["isExpression"]) {
+            expressionIndices.push(i);
+            continue;
+        }
+        if (xArg["isAssigned"] && yArg["isAssigned"]) {
+			if (xArg["value"] !== yArg["value"]) {
+				// console.log("Here?");
+				// console.log(xArg);
+				// console.log(yArg);
+				// debugger;
+				return undefined;
+			} else {
+				continue;
+			}
         }
         if (xArg["muted"] || yArg["muted"] || (xArg["name"] === undefined && yArg["name"] === undefined)) {
             // console.log("xArg:", xArg, "\nyArg:", yArg);
@@ -267,6 +291,33 @@ function unify(x, y) { // x, y are literals. Assymetric unification since y is a
             // console.log("Four", unifier);
         }
     }
+    if (expressionIndices.length === 0) {
+        return unifier;
+    }
+    let extendedSub;
+    if (sub === undefined) {
+        extendedSub = unifier;
+    } else {
+        extendedSub = extend(sub, unifier);
+    }
+    let val;
+    for (const i of expressionIndices) {
+        xArg = xArgs[i];
+        yArg = yArgs[i];
+        if (xArg["isExpression"]) {
+            val = numParser(applyToString(xArg["value"], extendedSub)).call();
+            if (parseFloat(val) !== parseFloat(yArg["value"])) {
+                return undefined;
+            }
+            unifier[yArg["name"]] = val;
+            continue;
+        }
+        val = numParser(applyToString(yArg["value"], extendedSub)).call();
+        if (parseFloat(val) !== parseFloat(xArg["value"])) {
+            return undefined;
+        }
+        unifier[xArg["name"]] = val;
+    }
     return unifier;
 }
 
@@ -291,9 +342,9 @@ function extend(sub, unifier) {
     "use strict";
     // console.log("sub:", sub);
     // console.log("Unifier in extend():");
-    // console.log(unifier);
+    // console.log("Unifier (in extend):", unifier);
     const extendedSub = deepCopy(sub);
-    // console.log("Sub:");
+    // console.log("Sub (in extend):");
     // console.log(extendedSub);
     for (const key of Object.keys(unifier)) {
         if (Object.keys(extendedSub).includes(key) && extendedSub[key] !== unifier[key] && !isVarString(extendedSub[key])) {
@@ -363,13 +414,56 @@ function applyToRule(sub, rule) {
     return subRule;
 }
 
-function getPriorities(kb) { // Linear order induced priorities.
-    priorities = {};
-    for (let i=0; i<kb.length; i++) {
-        // console.log(kb);
-        priorities[ruleToString(kb[i])] = kb.length - i - 1; // TODO Remember this is in reverse order!
+/*
+ * IMPORTANT NOTE!
+ * 		A priority function is supposed to return either boolean values or undefined. Namely, prior(x, y) should be true if
+ * 		x > y, false if y < x and undefined in case x and y are incomparable.
+ */
+
+function linearPriorities(rule1, rule2, kbObject, sub) { // true if rule1 is of HIGHER priority than rule2.
+    return kbObject["kb"].indexOf(rule1) > kbObject["kb"].indexOf(rule2);
+}
+
+function specificityPriorities(rule1, rule2, kbObject, sub) { // true if rule1 is of HIGHER priority than rule2.
+    const body1 = rule1["body"];
+    const body2 = rule2["body"];
+    // console.log("body1:", body1, "body2:", body2, "sub:", sub);
+    if (isMoreSpecific(body1, body2, sub)) {
+		return true;
+	}
+    if (isMoreSpecific(body2, body1, sub)) {
+		return false;
+	}
+	return undefined;
+}
+
+function isMoreSpecific(body1, body2, sub) { // true if body1 is more specific than body2, false otherwise.
+	let included, unifiable;
+	for (const literal2 of body2) {
+        included = false;
+        for (const literal1 of body1) {
+            unifiable = unify(applyToLiteral(sub, literal1), applyToLiteral(sub, literal2), sub);
+            // console.log("unifier:", unifiable);
+            if (unifiable) {
+				// console.log("Why here?");
+                included = true;
+                break;
+            }
+        }
+        if (!included) {
+			// console.log("false");
+			return false;
+        }
     }
-    return priorities;
+    return true;
+}
+
+function customPrioritiesFunction(rule1, rule2, kbObject, sub) { // true if rule1 is of HIGHER priority than rule2.
+    const priorities = kbObject["customPriorities"];
+    if (!Object.keys(priorities).includes(rule1["name"]) || !Object.keys(priorities).includes(rule2["name"]) || priorities[rule1["name"]] === priorities[rule2["name"]]) {
+        return undefined;
+    }
+    return priorities[rule1["name"]] > priorities[rule2["name"]];
 }
 
 /* Test case that fails!
@@ -381,15 +475,24 @@ R3 :: h(X) implies -f(X);
 Context: g(b); h(b);
 */
 
-function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRules, sub, constraints) { //TODO You may need to store the substitution alongside each rule, in case one needs to count how many time a rule has been triggered or so.
+/*
+ Dilemmas:
+	* Existing rule, r1, that infers z and new rule, r2, that infers -z;
+	* Current policy: Remove all rules that infer z and are of lower priority than r2;
+	* In case r2 beats every rule that infers z, then -z and r2 are added to the graph ONLY IF r2 is indeed of higher priority than
+		* all such rules. Otherwise, we merely keep track of the agent's dilemmas.
+ * */
+
+function updateGraph(inferredHead, newRule, graph, facts, priorityFunction, deletedRules, sub, constraints, kbObject, dilemmas) { //TODO You may need to store the substitution alongside each rule, in case one needs to count how many time a rule has been triggered or so.
     let inferred = false;
     // console.log("inferredHead:", inferredHead);
     // console.log("facts:", facts);
     // debugger;
-    if (deepIncludes(inferredHead, facts)) {
+    const headInDilemma = isInDilemma(newRule, dilemmas)
+    if (deepIncludes(inferredHead, facts) && !headInDilemma) {
         // console.log("Includes inferredHead");
         if (!Object.keys(graph).includes(literalToString(inferredHead))) {
-            graph[literalToString(inferredHead)] = [newRule]; // TODO Newly added code, check for potentially unexpected behaviours!
+            graph[literalToString(inferredHead)] = [newRule];
             inferred = true;
         }
         if (!deepIncludes(newRule, graph[literalToString(inferredHead)]) && !deepIncludes(newRule, deletedRules)) {
@@ -402,6 +505,7 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
             facts: facts,
             inferred: inferred,
             deletedRules: deletedRules,
+            dilemmas: dilemmas,
         };
     }
     const casualConflict = {}
@@ -415,12 +519,13 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
     if (constraints.has(key)) {
         const keyObject = constraints.get(key)["keyObject"];
         for (const conflict of constraints.get(key)["constraints"]) {
-            const constraintUnifier = unify(keyObject, inferredHead);
+            const constraintUnifier = unify(keyObject, inferredHead, sub);
             conflicts.push(applyToLiteral(sub, applyToLiteral(constraintUnifier, conflict)));
         }
     }
     // console.log("key:", key, "\nconflicts:", conflicts);
     let includesConflict = false;
+    let isPrior, beatsAll;
     for (const oppositeHead of conflicts) {
         // console.log("Here");
         if (deepIncludes(oppositeHead, facts, true)) {
@@ -430,15 +535,28 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
             // console.log("facts:", facts);
             // console.log("graph:", graph);
             // console.log("lit:", oppositeHead);
+            // debugger;
+            beatsAll = true; // FIXME in case an ungrounded variable appears on the head (i.e., one that *DOES NOT* appear in the rule's body, it should through a runtime error --- or, better, catch this on parsing?)
             for (const rule of graph[literalToString(oppositeHead)]) {
-                if (priorities[ruleToString(rule)] > priorities[ruleToString(newRule)]) {
+				isPrior = priorityFunction(newRule, rule, kbObject, sub);
+                // console.log(newRule, rule);
+                // console.log("isPrior:", isPrior);
+                // debugger;
+                if (isPrior === undefined || isPrior) {
                     toBeRemoved.push(rule);
-                    if (!deepIncludes(rule, deletedRules)); {
+                    if (!deepIncludes(rule, deletedRules)) {
                         deletedRules.push(rule);
                     }
                     inferred = true;
                     // console.log("Includes opposite head and not rule.");
                     // debugger;
+                    if (isPrior === undefined) {
+						if (!deepIncludes([rule, newRule, sub], dilemmas) && !deepIncludes([newRule, rule, sub])) {
+							dilemmas.push([rule, newRule, sub]);
+						}
+						beatsAll = false;
+						inferred = false;
+					}
                 }
             }
             if (graph[literalToString(oppositeHead)].length === toBeRemoved.length) {
@@ -446,10 +564,12 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
                 delete graph[literalToString(oppositeHead)];
                 // console.log("graph:", graph);
                 // debugger;
-                graph[literalToString(inferredHead)] = [newRule];
-                // console.log("Facts prior to pushing: ", facts);
-                // debugger;
-                facts.push(inferredHead);
+                if (beatsAll) {
+					graph[literalToString(inferredHead)] = [newRule];
+					// console.log("Facts prior to pushing: ", facts);
+					// debugger;
+					facts.push(inferredHead);
+				}
                 // console.log("Facts prior to splicing: ", facts, "\nIndex of opposite head: " + deepIndexOf(facts, oppositeHead));
                 // debugger;
                 // facts = facts.splice(deepIndexOf(facts, oppositeHead), 1); // FIXME .indexOf() returns -1 because, guess what, it does not work with lists of objects... Create a deep alternative.
@@ -461,7 +581,7 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
             }
         }
     }
-    if (!includesConflict) {
+    if (!includesConflict && !headInDilemma) {
         // console.log("No conflict");
         facts.push(inferredHead);
         graph[literalToString(inferredHead)] = [newRule];
@@ -474,10 +594,23 @@ function updateGraph(inferredHead, newRule, graph, facts, priorities, deletedRul
         facts: facts,
         inferred: inferred,
         deletedRules: deletedRules,
+        dilemmas: dilemmas,
     };
 }
 
-function forwardChaining(kbObject, context) { //FIXME Huge inconsistency with DOCS! You need to change that from [rule1, ...] to KBObject.
+function isInDilemma(rule, dilemmas) {
+    if (dilemmas === undefined) {
+        return false;
+    }
+	for (const dilemma of dilemmas) {
+		if (deepIncludes(rule, dilemma.slice(1))) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function forwardChaining(kbObject, context, priorityFunction=linearPriorities) { //FIXME Huge inconsistency with DOCS! You need to change that from [rule1, ...] to KBObject.
     let facts = deepCopy(context);
     facts.push({
         name: "true",
@@ -494,9 +627,15 @@ function forwardChaining(kbObject, context) { //FIXME Huge inconsistency with DO
     let inferred = false;
     let graph = {};
     let deletedRules = [];
+    let dilemmas = [];
     // console.log(kbObject);
     const code = kbObject["code"];
-    const priorities = getPriorities(kb);
+    const customPriorities = kbObject["customPriorities"];
+    if (Object.keys(customPriorities).length > 0) {
+        priorityFunction = customPrioritiesFunction;
+    }
+    // console.log(priorityFunction);
+    // const priorities = priorityFunction(kb);
     // let i = 0;
     do {
         inferred = false;
@@ -506,21 +645,21 @@ function forwardChaining(kbObject, context) { //FIXME Huge inconsistency with DO
                 continue;
             }
             // console.log(rule);
-            // FIXME You have to fix the relational version in the same manner as the propositional!
-            const subs = getSubstitutions(rule["body"], facts, code); // FIXME Not computing all substitutions --- actually none for: @KnowledgeBase
+            const subs = getSubstitutions(rule["body"], facts, code);
             // console.log(subs);
             // debugger;
             for (let i=0; i<subs.length; i++) {
                 const sub = subs[i];
-                // console.log(sub);
+                // console.log("sub:", sub);
                 // console.log(code);
                 // console.log("Rule head:");
                 // console.log(rule["head"]);
                 const inferredHead = applyToLiteral(sub, rule["head"]);
-                const updatedGraph = updateGraph(inferredHead, rule, graph, facts, priorities, deletedRules, sub, kbObject["constraints"]);
+                const updatedGraph = updateGraph(inferredHead, rule, graph, facts, priorityFunction, deletedRules, sub, kbObject["constraints"], kbObject, dilemmas);
                 // console.log(updatedGraph);
                 graph = updatedGraph["graph"]; // You could probably push the entire graph Object!
                 facts = updatedGraph["facts"];
+                dilemmas = updatedGraph["dilemmas"];
                 deletedRules = updatedGraph["deletedRules"];
                 if (!inferred) {
                     inferred = updatedGraph["inferred"];
@@ -535,6 +674,7 @@ function forwardChaining(kbObject, context) { //FIXME Huge inconsistency with DO
         context: context,
         facts: facts,
         graph: graph,
+        dilemmas: dilemmas,
     }
 }
 
@@ -595,8 +735,9 @@ function equalityCheck(literal, sub) {
     // console.log("Args:");
     // console.log(leftArg);
     // console.log(rightArg);
+    // console.log("sub:", sub);   
     // console.log(rightArg["name"].match(jsRE));
-    if (!leftArg["isAssigned"] && Object.keys(sub).includes(leftArg["name"])) {
+    if (!leftArg["isAssigned"] && sub && Object.keys(sub).includes(leftArg["name"])) {
         leftArg = {
             index: leftArg["index"],
             name: leftArg["name"],
@@ -606,7 +747,7 @@ function equalityCheck(literal, sub) {
         };
         // console.log("Assgn left");
     }
-    if (!rightArg["isAssigned"] && Object.keys(sub).includes(rightArg["name"])) {
+    if (!rightArg["isAssigned"] && sub && Object.keys(sub).includes(rightArg["name"])) {
         rightArg = {
             index: rightArg["index"],
             name: rightArg["name"],
@@ -626,6 +767,8 @@ function equalityCheck(literal, sub) {
     }
     if (leftArg["isAssigned"] && rightArg["isAssigned"]) {
         // console.log(leftArg["value"] + " === " + rightArg["value"]);
+        // console.log(leftArg["value"] + " === " + rightArg["value"]);
+        // console.log("Here!");
         return {
             isValid: sign === numParser(evalExpression(leftArg, sub) + " === " + evalExpression(rightArg, sub)).call(), // TODO Consider unifying evalExpression() and applyToString() to a single function if it actually makes sense.
             unifier: undefined,
@@ -633,21 +776,22 @@ function equalityCheck(literal, sub) {
     }
     if (leftArg["isAssigned"]) {
         const unifier = {};
-        unifier[rightArg["name"]] = numParser(applyToString(leftArg["value"], sub)).call();
+        unifier[rightArg["name"]] = numParser(evalExpression(leftArg, sub)).call();
         // console.log(unifier);
         return {
-            isValid: true,
+            isValid: true, // FIXME At this point, you should return a RUNTIME error in case sign === false (which is pointless).
             unifier: unifier,
         };
     }
     const unifier = {};
     // console.log("Here!");
-    unifier[leftArg["name"]] = numParser(applyToString(rightArg["value"], sub)).call();
-    // console.log("Equality sub:"); // TODO update equality so as to allow for operations with variables.
+    unifier[leftArg["name"]] = numParser(evalExpression(rightArg, sub)).call();
+    // unifier[leftArg["name"]] = numParser(applyToString(rightArg["value"], sub)).call();
+    // console.log("Equality sub:");
     // console.log(sub);
     // console.log(unifier);
     return {
-        isValid: true,
+        isValid: true, // FIXME At this point, you should return a RUNTIME error in case sign === false (which is pointless).
         unifier: unifier,
     };
 }
@@ -730,10 +874,11 @@ function jsCheck(literal, sub, code) {
 
 function numParser(string) {
     // console.log("numParser:", string);
-    return Function('"use strict"; return (' + string + ');');
+    return Function('return (' + string + ');');
 }
 
 function applyToString(string, sub) {
+    // console.log("applyToString:", string, sub);
     if (sub === undefined || Object.keys(sub).length === 0) {
         return "false";
     }
@@ -752,8 +897,9 @@ function applyToString(string, sub) {
 }
 
 function evalExpression(expression, sub) {
+    // console.log(expression["value"], sub);
     if (!expression["isExpression"]) {
-        return expression["value"];
+        return "" + expression["value"];
     }
     // console.log("expression:", expression, "sub:", sub);
     return applyToString(expression["value"], sub);
