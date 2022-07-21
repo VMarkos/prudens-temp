@@ -1,5 +1,5 @@
-const N_ROWS = 10;
-const N_COLS = 10;
+const N_ROWS = 8;
+const N_COLS = 8;
 
 let BOARD; // 0 = empty, 1 = white, -1 = black.
 let LEGAL_MOVES; // String array, containing all cell ids that are legal moves.
@@ -11,11 +11,13 @@ let ALL_DIRECTIONS = [
     [-1, -1], [-1, 0], [-1, 1],
 ];
 let PLAYING = true;
-let EMPTY_CELLS = N_ROWS * N_COLS - 4;
+let EMPTY_CELLS;
 let NO_LEGAL_MOVES = false;
-let FAILED_MOVES = 0;
 
 function initializeBoard() {
+    document.getElementById("blacks").innerText = 2;
+    document.getElementById("whites").innerText = 2;
+    EMPTY_CELLS = N_ROWS * N_COLS - 4;
     const boardContainer = document.getElementById("board-container");
     let othelloCell;
     boardContainer.style.gridTemplateColumns = "repeat(" + N_COLS + ", 1fr)";
@@ -59,7 +61,7 @@ function eraseLegalMoves() {
     }
 }
 
-function flipPieces() { // cellId is the id of the last move.
+function flipPieces() {
     let coords, currentPiece, row, col;
     // console.log("TO_BE_FLIPPED:", TO_BE_FLIPPED);
     for (const cellId of TO_BE_FLIPPED[LAST_MOVE]) {
@@ -130,7 +132,6 @@ function calculateLegalMoves(opponent = 1) {
             for (const direction of ALL_DIRECTIONS) {
                 toBeFlipped.push(...isLegalMoveInDirection(currentCellId, direction[0], direction[1], opponent));
             }
-            // console.log("toBeFlipped:", toBeFlipped);
             if (toBeFlipped.length !== 0) {
                 LEGAL_MOVES.push(currentCellId);
                 TO_BE_FLIPPED[currentCellId] = toBeFlipped;
@@ -146,16 +147,10 @@ function isLegalMoveInDirection(cellId, xStep, yStep, opponent = 1) {
     const cellY = parseInt(coords[2]);
     const opponentCells = [];
     if (BOARD[cellX][cellY] !== 0) {
-        // console.log("Non-empty cell.");
         return [];
     }
     let currentX = cellX + xStep, currentY = cellY + yStep, isPreviousWhite = false;
-    if (cellX === 3 && cellY === 4) {
-        // console.log("x:", currentX, "y:", currentY, "board:", BOARD[currentX][currentY]);
-        // debugger;
-    }
-    while (currentX < N_ROWS && currentX > 0 && currentY < N_COLS && currentY > 0 && BOARD[currentX][currentY] !== 0) {
-        // console.log("Here!");
+    while (currentX < N_ROWS && currentX >= 0 && currentY < N_COLS && currentY >= 0 && BOARD[currentX][currentY] !== 0) {
         if (isPreviousWhite && BOARD[currentX][currentY] === -opponent) {
             return opponentCells;
         }
@@ -172,26 +167,29 @@ function isLegalMoveInDirection(cellId, xStep, yStep, opponent = 1) {
     return [];
 }
 
-function gameOver() {
-	let cell;
-	for (let row = 0; row < N_ROWS; row++) {
-		for (let col = 0; col < N_COLS; col++) {
-			if (!VISIBLE[row][col] && BOARD[row][col] === -1) {
-				cell = document.getElementById(row + "-" + col);
-				unveilSingleCell(cell);
-				// cell.classList.add("clicked");
-				// cell.innerHTML = CELL_LABELS[BOARD[row][col]]["label"];
-			}
-		}
-	}
-}
+// function gameOver() {
+// 	let cell;
+// 	for (let row = 0; row < N_ROWS; row++) {
+// 		for (let col = 0; col < N_COLS; col++) {
+// 			if (!VISIBLE[row][col] && BOARD[row][col] === -1) {
+// 				cell = document.getElementById(row + "-" + col);
+// 				unveilSingleCell(cell);
+// 				// cell.classList.add("clicked");
+// 				// cell.innerHTML = CELL_LABELS[BOARD[row][col]]["label"];
+// 			}
+// 		}
+// 	}
+// }
 
 function startNewGameDialogue(result) {
 	const newGame = confirm(`${result} Start another game?`);
 		if (newGame) {
+            PLAYING = true;
+            const boardContainer = document.getElementById("board-container");
+            while (boardContainer.firstChild) {
+                boardContainer.removeChild(boardContainer.lastChild);
+            }
 			initializeBoard();
-            // document.getElementById("play-button-text").innerHTML = "Next";
-			// PLAYING = true;
 		}
 }
 
@@ -204,16 +202,9 @@ function nextMove(moveFunction=randomMove) {
         document.getElementById("play-button-text").innerHTML = "Next";
 	}
 	const move = moveFunction();
-	if (move === -1) {
-        // console.log(-1);
-		// gameOver();
-		// PLAYING = false;
-        // document.getElementById("play-button-text").innerHTML = "Start";
-		// startNewGameDialogue("You lost!");
-	} else if (move === 1) {
-		gameOver();
+    // debugger;
+	if (move === 1) {// || EMPTY_CELLS === 0) {
 		PLAYING = false;
-        document.getElementById("play-button-text").innerHTML = "Start";
 		startNewGameDialogue("Game Over!");
 	}
 }

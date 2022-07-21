@@ -700,6 +700,43 @@ pre > code {
 
 /* Othello */
 
+.othello-board-padding-container {
+    padding: 6px;
+}
+
+.othello-score-board-container {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0px 20px 0px;
+}
+
+.othello-point-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.othello-point-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: red;
+}
+
+.othello-point-color.black {
+    background-color: black;
+}
+
+.othello-point-color.white {
+    background-color: white;
+}
+
+.othello-score-text-container {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16pt;
+    font-weight: 600;
+}
+
 .othello-board-container {
     background-color: white;
     display: grid;

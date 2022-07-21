@@ -1,7 +1,9 @@
 function randomMove(color = -1) {
     if (LEGAL_MOVES.length === 0) {
-        FAILED_MOVES += 1;
-        return -1;
+        calculateLegalMoves(1);
+        if (LEGAL_MOVES.length === 0) {
+            return 1;
+        }
     }
 	let row, col;
 	do {
@@ -17,10 +19,13 @@ function randomMove(color = -1) {
 	return 0;
 }
 
-function prudensMove(timeOut = 200) { // Infers all legible moves according to the provided policy and then choses at random (this might need to be changed).
+function prudensMove() { // Infers all legible moves according to the provided policy and then choses at random (this might need to be changed).
     if (LEGAL_MOVES.length === 0) {
-        FAILED_MOVES += 1;
-        return -1;
+        calculateLegalMoves(-1);
+        if (LEGAL_MOVES.length === 0) {
+            return 1;
+        }
+        return randomMove(1);
     }
 	const inferences = otDeduce().split(";").filter(Boolean);
 	const suggestedMoves = [];
@@ -48,9 +53,8 @@ function prudensMove(timeOut = 200) { // Infers all legible moves according to t
 		return -1;
 	}
 	makeSingleMove(row, col);
-    // debugger;
-    setTimeout(() => {randomMove(1);}, timeOut);
-    // debugger;
+    randomMove(1);
+    console.log(isGameOver());
 	if (isGameOver()) {
 		return 1;
 	}
@@ -58,7 +62,8 @@ function prudensMove(timeOut = 200) { // Infers all legible moves according to t
 }
 
 function isGameOver() {
-    return EMPTY_CELLS === 0 || FAILED_MOVES === 2;
+    console.log("EMPTY_CELLS:", EMPTY_CELLS);
+    return EMPTY_CELLS === 0;
 }
 
 function updateLastMove(cellId) {
@@ -92,7 +97,6 @@ function extractContext() { // Convert an othello board to a Prudens context.
 }
 
 function makeSingleMove(row, col, color = -1) {
-    // console.log("make single move");
     eraseLegalMoves();
     const pieceClass = `othello-piece-${color === 1 ? "white" : "black"}`;
     const cell = document.getElementById("oc-" + row + "-" + col);
@@ -101,15 +105,30 @@ function makeSingleMove(row, col, color = -1) {
         const redDot = document.createElement("div");
         redDot.classList.add("othello-last-move");
         piece.append(redDot);
-        // console.log(row, col, LAST_MOVE);
     }
     piece.classList.add(pieceClass);
     cell.append(piece);
     BOARD[row][col] = color;
     flipPieces();
+    updateScore(color);
     calculateLegalMoves(color);
     drawLegalMoves();
     EMPTY_CELLS -= 1;
+}
+
+function updateScore(color) {
+    const flipped = TO_BE_FLIPPED[LAST_MOVE].length;
+    const blacksElement = document.getElementById("blacks");
+    const whitesElement = document.getElementById("whites");
+    const oldBlacks = parseInt(blacksElement.innerText);
+    const oldWhites = parseInt(whitesElement.innerText);
+    if (color === 1) {
+        blacksElement.innerText = oldBlacks - flipped;
+        whitesElement.innerText = oldWhites + flipped + 1;
+    } else {
+        blacksElement.innerText = oldBlacks + flipped + 1;
+        whitesElement.innerText = oldWhites - flipped;
+    }
 }
 
 /*
