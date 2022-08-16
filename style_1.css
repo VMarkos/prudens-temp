@@ -791,3 +791,10 @@ pre > code {
     border-radius: 50%;
     background-color: rgba(199, 75, 80, 1);
 }
+
+/* Chess */
+
+.chess-board-container {
+    width: 400px; 
+    padding: 5px;
+}

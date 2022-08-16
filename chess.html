@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">
+        </link>
+        <link rel="stylesheet"
+            href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css"
+            integrity="sha384-q94+BZtLrkL1/ohfjR8c6L+A6qzNH9R2hBLwyoAfu3i/WCvQjzL2RQJ3uNHDISdU"
+            crossorigin="anonymous">
+        <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js">
+        </script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2"
+            crossorigin="anonymous">
+        </script>
+        <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"
+            integrity="sha384-8Vi8VHwn3vjQ9eUHUxex3JSN/NFqUg3QbPyX8kWyb93+8AC/pPWTzj+nHtbC5bxD"
+            crossorigin="anonymous">
+        </script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
+        <link rel="stylesheet" type="text/css" href="style_1.css" media="screen"/>
+        <script type="text/javascript" src="./prudens_web/parsers.js"></script>
+        <script type="text/javascript" src="./prudens_web/prudens.js"></script>
+        <script type="text/javascript" src="./prudens_web/prudensUtils.js"></script>
+        <script type="text/javascript" src="simpleMode.js"></script>
+        <script type="text/javascript" src="prudensMode.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.2/chess.js" integrity="sha384-s3XgLpvmHyscVpijnseAmye819Ee3yaGa8NxstkJVyA6nuDFjt59u1QvuEl/mecz" crossorigin="anonymous"></script>
+        <title>
+            Prudens
+        </title>
+    </head>
+    <body>
+        <div id="navbar-container" class="navbar-container">
+            <div class="navbar-centering-container">
+                <div class="hamburger-menu-container" onclick="burgerMenuDrop()">
+                    <i id="menu-burger" class="fa fa-bars fa-2x"></i>
+                </div>
+                <div class="navbar-logo-container">
+                    <a href="index.html">Prudens</a>
+                </div>
+                <div class="social-icons-container">
+                    <a href="https://github.com/VMarkos/prudens-js"><i class="fa fa-github fa-2x"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="hamburger-menu" class="hamburger-menu hidden">
+            <div class="menu-options-container">
+                <div id="menu-options-container" class="menu-options-left-align">
+                    <div class="menu-option">
+                        <a href="index.html"><span><i class="fa fa-home"></i> Home</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_web.html"><span><i class="fa fa-window-maximize"></i> Prudens Web</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="prudens_api.html"><span><i class="fa fa-gears"></i> Prudens API</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="docs.html"><span><i class="fa fa-book"></i> Learn Prudens</span></a>
+                    </div>
+                    <div class="menu-option">
+                        <a href="research.html"><span><i class="fa fa-flask"></i> Research</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-code-container">
+        	<div id="main-container" class="card-container-padding">
+		        <div id="chess-main-card" class="shrinking-card-container">
+		            <div class="code-header-container">
+		                <div class="button-container">
+		                    <div class="prudens-button" onclick="playARound()">
+		                        <i class="fa fa-chevron-right"></i>
+		                        <div id="play-button-text">Play</div>
+		                    </div>
+		                </div>
+                        <div class="minesweeper-taskbar-container">
+                            <div class="taskbar-icon-container" onclick="displayInfo()">
+                                <i class="fa fa-info fa-2x"></i>
+                            </div>
+                        </div>
+		            </div>
+		            <div class="minesweeper-grid-container">
+		                <div class="policy-editor-container">
+		                	<div class="code-header-label-container minesweeper-label">
+		                		<div class="code-header-label">
+		                			Policy
+		                		</div>
+		                	</div>
+		                    <div id="policy-container" class="codemirror-container">
+
+		                    </div>
+		                </div>
+                        <div class="gameboard-container">
+                            <div class="minesweeper-label-container minesweeper-label">
+                                <div class="code-header-label">
+                                    Game Board
+                                </div>
+                            </div>
+                            <div class="center-board-container">
+                                <div id="game-board" class="chess-board-container"></div>
+                            </div>
+                        </div>
+		            </div>
+		        </div>
+                <div id="chess-help" class="shrinking-card-container no-display invisible">
+                    <div class="minesweeper-help-header-container">
+                        <div class="minesweeper-taskbar-container">
+                            <div class="taskbar-icon-container" onclick="displayBoard()">
+                                <i class="fa fa-close fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="minesweeper-help-text-container">
+                        <h2>Chess's Language</h2>
+                        <p>
+                            Prudens's Chess language provides three built-in predicates:
+                        </p>
+                        <ul>
+                            <li>
+                                <code>legalMove(Piece, Color, FromCol, FromRow, ToCol, ToRow, Flags)</code>, describing a 
+                                legal move of a piece of type <code>Piece</code> of color <code>Color</code>, from the cell at column
+                                <code>FromCol</code> and at row <code>FromRow</code> to the cell at column <code>ToCol</code> 
+                                and at row <code>ToRow</code>. Also, the move may be accompanied by one or more flags (as discussed below);
+                            </li>
+                            <li>
+                                <code>at(Col, Row, Piece, Color)</code> represents a cell at column <code>Col</code> and row <code>Row</code>
+                                with a piece <code>Piece</code> of color <code>Color</code> on it;
+                            </li>
+                            <li>
+                                <code>move(Piece, Color, FromCol, FromRow, ToCol, ToRow, Flags)</code> corresponds to a move action and should be used in order 
+                                to indicate preference regarding making a certain move or not.
+                            </li>
+                        </ul>
+                        <p>
+                            The values the various arguments might take are as follows:
+                        </p>
+                        <ul>
+                            <li>
+                                Rows range from <code>1</code> to <code>8</code>;
+                            </li>
+                            <li>
+                                Columns range from <code>a</code> to <code>h</code>;
+                            </li>
+                            <li>
+                                Pieces are denoted using the usual <a href="https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation">FEN</a> notation, i.e., <code>p</code> for pawn, 
+                                <code>n</code> for knight etc;
+                            </li>
+                            <li>
+                                Color is denoted by <code>b</code> for black and <code>w</code> for white;
+                            </li>
+                            <li>
+                                Move flags follow the <code>chess.js</code> library specifications, as found 
+                                <a href="https://github.com/jhlywa/chess.js#move-objects-eg--verbose-true-">here</a>.
+                            </li>
+                        </ul>
+                        <h2>A Simple Example</h2>
+                        <p>
+							A very simple policy could be the following one:
+                        </p>
+                        <pre>
+							<code>@KnowledgeBase
+                                Dummy :: legalMove(Piece, Color, FromCol, FromRow, ToCol, ToRow, Flags) implies move(Piece, Color, FromCol, FromRow, ToCol, ToRow, Flags);`</code>
+                        </pre>
+                        <p>
+							That is, any legal move should be considered. Evidently, the above is not
+							a sustainable strategy, since it is actually equivalent to playing at random.
+                        </p>
+                        <p>
+							<i>For more on Prudens's Language, <a href="docs.html">read the Docs!</a></i>
+						</p>
+                    </div>
+                </div>
+		    </div>
+        </div>
+        <script type="text/javascript" src="chessMain.js"></script>
+        <script type="text/javascript" src="navbar.js"></script>
+    </body>
+</html>

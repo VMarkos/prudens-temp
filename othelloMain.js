@@ -88,7 +88,6 @@ function changeTabs(e1, e2) {
             e1.style.scale = "0%";
             e2.classList.remove("shrink-to-center");
             e2.classList.remove("no-display");
-            e2.classList.remove("inivisible");
             e2.offsetHeight;
             e2.style.scale = "100%";
         },
